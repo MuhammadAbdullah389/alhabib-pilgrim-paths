@@ -47,8 +47,8 @@ const Footer = () => {
           <div>
             <h3 className="text-accent font-display text-lg mb-5">Contact Us</h3>
             <div className="flex flex-col gap-3 text-sm text-primary-foreground/60">
-              <a href="tel:+923001234567" className="flex items-center gap-2 hover:text-accent transition-colors">
-                <Phone className="w-4 h-4 text-accent/70" /> +92 300 1234567
+              <a href="tel:+923422356719" className="flex items-center gap-2 hover:text-accent transition-colors">
+                <Phone className="w-4 h-4 text-accent/70" /> +92 342 2356719
               </a>
               <a href="mailto:info@alhabibtravel.com" className="flex items-center gap-2 hover:text-accent transition-colors">
                 <Mail className="w-4 h-4 text-accent/70" /> info@alhabibtravel.com

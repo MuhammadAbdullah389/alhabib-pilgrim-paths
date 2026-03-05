@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import ScrollReveal from "@/components/animations/ScrollReveal";
 
 const contactItems = [
-  { icon: Phone, label: "Phone", value: "+92 300 1234567", href: "tel:+923001234567" },
+  { icon: Phone, label: "Phone", value: "+92 342 2356719", href: "tel:+923422356719" },
   { icon: Mail, label: "Email", value: "info@alhabibtravel.com", href: "mailto:info@alhabibtravel.com" },
   { icon: MapPin, label: "Office Address", value: "Main Bazaar, Near Jama Masjid,\nNarowal, Punjab, Pakistan" },
   { icon: Clock, label: "Office Hours", value: "Mon–Sat: 9AM – 8PM\nSun: 10AM – 4PM" },
