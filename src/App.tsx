@@ -16,6 +16,7 @@ import AdminOverview from "./pages/admin/AdminOverview";
 import AdminPackages from "./pages/admin/AdminPackages";
 import AdminHotels from "./pages/admin/AdminHotels";
 import AdminBookings from "./pages/admin/AdminBookings";
+import AdminTestimonials from "./pages/admin/AdminTestimonials";
 
 const queryClient = new QueryClient();
 
