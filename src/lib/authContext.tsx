@@ -17,6 +17,7 @@ interface AuthContextType {
   profile: Profile | null;
   isAdmin: boolean;
   isLoading: boolean;
+  refreshProfile: () => Promise<void>;
   signUp: (email: string, password: string, fullName: string) => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
@@ -170,12 +171,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const isAdmin = profile?.role === 'admin';
 
+  const refreshProfile = async () => {
+    if (!user?.id) return;
+    await loadProfileSafe(user.id);
+  };
+
   const value = {
     session,
     user,
     profile,
     isAdmin,
     isLoading,
+    refreshProfile,
     signUp,
     signIn,
     signOut,

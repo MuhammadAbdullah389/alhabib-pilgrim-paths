@@ -15,6 +15,7 @@ const navLinks = [
   { label: "About Us", path: "/about-us" },
   { label: "Contact Us", path: "/contact-us" },
   { label: "FAQs", path: "/faqs" },
+  { label: "Track Application", path: "/track-application" },
 ];
 
 const Navbar = () => {
@@ -164,7 +165,10 @@ const Navbar = () => {
                 <Button
                   variant="gold"
                   className="w-full gap-2 mt-2"
-                  onClick={() => setLoginModalOpen(true)}
+                  onClick={() => {
+                    setIsOpen(false);
+                    setLoginModalOpen(true);
+                  }}
                 >
                   <LogIn className="w-4 h-4" /> Login
                 </Button>
@@ -173,7 +177,7 @@ const Navbar = () => {
           </motion.div>
         )}
       </AnimatePresence>
-      
+
       <LoginModal isOpen={loginModalOpen} onClose={() => setLoginModalOpen(false)} />
     </motion.nav>
   );

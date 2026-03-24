@@ -54,6 +54,7 @@ function DocUploadAlert({ booking }: { booking: Pick<Booking, 'id' | 'booking_co
 }
 
 const UserOverview = () => {
+  const navigate = useNavigate();
   const { user } = useAuth();
   const { data: bookings, isLoading } = useUserBookings(user?.id || "");
 

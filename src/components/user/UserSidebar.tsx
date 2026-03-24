@@ -1,4 +1,4 @@
-import { LayoutDashboard, ClipboardList, MessageSquare, ArrowLeft, PlusCircle } from "lucide-react";
+import { LayoutDashboard, ClipboardList, MessageSquare, ArrowLeft, PlusCircle, UserCog } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/lib/authContext";
@@ -13,6 +13,7 @@ const items = [
   { title: "My Bookings", url: "/dashboard/bookings", icon: ClipboardList },
   { title: "Apply Again", url: "/dashboard/apply", icon: PlusCircle },
   { title: "My Testimonials", url: "/dashboard/testimonials", icon: MessageSquare },
+  { title: "Profile Settings", url: "/dashboard/profile", icon: UserCog },
 ];
 
 export function UserSidebar() {
@@ -25,12 +26,11 @@ export function UserSidebar() {
     path === "/dashboard" ? location.pathname === "/dashboard" : location.pathname.startsWith(path);
 
   const handleBackToSite = async () => {
+    navigate('/', { replace: true });
     try {
       await signOut();
     } catch {
       toast.error("Failed to log out cleanly");
-    } finally {
-      navigate('/');
     }
   };
 

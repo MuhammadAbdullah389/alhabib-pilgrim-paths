@@ -1,7 +1,8 @@
+import { useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import Index from "./pages/Index";
 import HajjPackages from "./pages/HajjPackages";
@@ -10,6 +11,7 @@ import VisaAssistance from "./pages/VisaAssistance";
 import FAQs from "./pages/FAQs";
 import AboutUs from "./pages/AboutUs";
 import ContactUs from "./pages/ContactUs";
+import TrackApplication from "./pages/TrackApplication";
 import NotFound from "./pages/NotFound";
 import SignIn from "./pages/auth/SignIn";
 import SignUp from "./pages/auth/SignUp";
@@ -25,12 +27,24 @@ import UserOverview from "./pages/user/UserOverview";
 import UserBookings from "./pages/user/UserBookings";
 import UserTestimonials from "./pages/user/UserTestimonials";
 import UserApply from "./pages/user/UserApply";
+import UserProfileSettings from "./pages/user/UserProfileSettings";
+
+const ScrollToTop = () => {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  }, [pathname]);
+
+  return null;
+};
 
 const App = () => (
   <TooltipProvider>
     <Toaster />
     <Sonner />
-    <BrowserRouter>
+    <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+      <ScrollToTop />
       <Routes>
           {/* Public Routes */}
           <Route path="/" element={<Index />} />
@@ -40,6 +54,7 @@ const App = () => (
           <Route path="/faqs" element={<FAQs />} />
           <Route path="/about-us" element={<AboutUs />} />
           <Route path="/contact-us" element={<ContactUs />} />
+          <Route path="/track-application" element={<TrackApplication />} />
 
           {/* Auth Routes */}
           <Route path="/auth/sign-in" element={<SignIn />} />
@@ -87,6 +102,14 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <UserTestimonials />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/dashboard/profile"
+            element={
+              <ProtectedRoute>
+                <UserProfileSettings />
               </ProtectedRoute>
             }
           />

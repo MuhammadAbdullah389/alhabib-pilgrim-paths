@@ -38,18 +38,18 @@ export function AdminSidebar() {
   const location = useLocation();
   const navigate = useNavigate();
   const { signOut } = useAuth();
+
   const isActive = (path: string) =>
     path === "/admin"
       ? location.pathname === "/admin"
       : location.pathname.startsWith(path);
 
   const handleBackToSite = async () => {
+    navigate("/", { replace: true });
     try {
       await signOut();
     } catch {
       toast.error("Failed to log out cleanly");
-    } finally {
-      navigate('/');
     }
   };
 
@@ -90,8 +90,8 @@ export function AdminSidebar() {
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton onClick={handleBackToSite} className="hover:bg-sidebar-accent/50">
-                    <ArrowLeft className="mr-2 h-4 w-4" />
-                    {!collapsed && <span>Back to Site</span>}
+                  <ArrowLeft className="mr-2 h-4 w-4" />
+                  {!collapsed && <span>Back to Site</span>}
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
