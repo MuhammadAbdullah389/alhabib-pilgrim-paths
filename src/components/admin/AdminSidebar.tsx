@@ -5,6 +5,7 @@ import {
   ClipboardList,
   FileText,
   MessageSquare,
+  MessageCircle,
   ArrowLeft,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
@@ -30,6 +31,7 @@ const adminItems = [
   { title: "Bookings", url: "/admin/bookings", icon: ClipboardList },
   { title: "Testimonials", url: "/admin/testimonials", icon: MessageSquare },
   { title: "Documents", url: "/admin/documents", icon: FileText },
+  { title: "Chat", url: "/admin/chat", icon: MessageCircle },
 ];
 
 export function AdminSidebar() {

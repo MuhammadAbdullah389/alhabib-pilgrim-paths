@@ -122,6 +122,31 @@ export interface RequiredDocument {
   created_at: string;
 }
 
+export interface ChatConversation {
+  id: string;
+  user_id: string;
+  created_at: string;
+  updated_at: string;
+  last_message_at: string;
+  profile?: {
+    id: string;
+    full_name: string | null;
+    phone: string | null;
+  } | null;
+  unread_count?: number;
+  last_message_preview?: string | null;
+}
+
+export interface ChatMessage {
+  id: string;
+  conversation_id: string;
+  sender_id: string;
+  sender_role: 'user' | 'admin';
+  message_text: string;
+  is_read: boolean;
+  created_at: string;
+}
+
 export interface PackageUpsertInput {
   id?: string;
   name: string;
@@ -774,6 +799,210 @@ export function useAllContactMessages() {
       if (error) throw error;
       return data as ContactMessage[];
     },
+  });
+}
+
+// ========== CHAT ==========
+
+export function useUserChatConversation(userId: string) {
+  return useQuery({
+    queryKey: ['chat-conversation', userId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('chat_conversations')
+        .select('*')
+        .eq('user_id', userId)
+        .maybeSingle();
+
+      if (error) throw error;
+      return (data as ChatConversation | null) ?? null;
+    },
+    enabled: !!userId,
+    retry: false,
+  });
+}
+
+export function useEnsureUserChatConversation() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (userId: string) => {
+      const { data, error } = await supabase
+        .from('chat_conversations')
+        .upsert({ user_id: userId }, { onConflict: 'user_id' })
+        .select('*')
+        .single();
+
+      if (error) throw error;
+      return data as ChatConversation;
+    },
+    onSuccess: (conversation) => {
+      queryClient.invalidateQueries({ queryKey: ['chat-conversation', conversation.user_id] });
+      queryClient.invalidateQueries({ queryKey: ['admin-chat-conversations'] });
+    },
+  });
+}
+
+export function useChatMessages(conversationId: string) {
+  return useQuery({
+    queryKey: ['chat-messages', conversationId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('chat_messages')
+        .select('*')
+        .eq('conversation_id', conversationId)
+        .order('created_at', { ascending: true });
+
+      if (error) throw error;
+      return (data || []) as ChatMessage[];
+    },
+    enabled: !!conversationId,
+    retry: false,
+  });
+}
+
+export function useSendChatMessage() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      conversationId,
+      senderId,
+      senderRole,
+      messageText,
+    }: {
+      conversationId: string;
+      senderId: string;
+      senderRole: 'user' | 'admin';
+      messageText: string;
+    }) => {
+      const cleanedMessage = messageText.trim();
+      if (!cleanedMessage) throw new Error('Message cannot be empty');
+
+      const { data, error } = await supabase
+        .from('chat_messages')
+        .insert({
+          conversation_id: conversationId,
+          sender_id: senderId,
+          sender_role: senderRole,
+          message_text: cleanedMessage,
+        })
+        .select('*')
+        .single();
+
+      if (error) throw error;
+      return data as ChatMessage;
+    },
+    onSuccess: (message) => {
+      queryClient.invalidateQueries({ queryKey: ['chat-messages', message.conversation_id] });
+      queryClient.invalidateQueries({ queryKey: ['admin-chat-conversations'] });
+    },
+  });
+}
+
+export function useMarkConversationMessagesRead() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      conversationId,
+      readerRole,
+    }: {
+      conversationId: string;
+      readerRole: 'user' | 'admin';
+    }) => {
+      const senderRoleToMark = readerRole === 'admin' ? 'user' : 'admin';
+
+      const { error } = await supabase
+        .from('chat_messages')
+        .update({ is_read: true })
+        .eq('conversation_id', conversationId)
+        .eq('sender_role', senderRoleToMark)
+        .eq('is_read', false);
+
+      if (error) throw error;
+      return true;
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['chat-messages', variables.conversationId] });
+      queryClient.invalidateQueries({ queryKey: ['admin-chat-conversations'] });
+    },
+  });
+}
+
+export function useAdminChatConversations() {
+  return useQuery({
+    queryKey: ['admin-chat-conversations'],
+    queryFn: async () => {
+      const { data: conversations, error: conversationError } = await supabase
+        .from('chat_conversations')
+        .select('*')
+        .order('last_message_at', { ascending: false });
+
+      if (conversationError) throw conversationError;
+
+      const typedConversations = (conversations || []) as ChatConversation[];
+      if (!typedConversations.length) return [] as ChatConversation[];
+
+      const userIds = [...new Set(typedConversations.map((c) => c.user_id))];
+
+      const [
+        { data: profiles, error: profileError },
+        { data: lastMessages, error: messageError },
+        { data: bookings, error: bookingError },
+      ] = await Promise.all([
+        supabase
+          .from('profiles')
+          .select('id, full_name, phone')
+          .in('id', userIds),
+        supabase
+          .from('chat_messages')
+          .select('conversation_id, message_text, sender_role, is_read, created_at')
+          .in('conversation_id', typedConversations.map((c) => c.id))
+          .order('created_at', { ascending: false }),
+        supabase
+          .from('bookings')
+          .select('user_id, applicant_email, applicant_phone')
+          .in('user_id', userIds),
+      ]);
+
+      if (profileError) throw profileError;
+      if (messageError) throw messageError;
+
+      const profileMap = new Map((profiles || []).map((p: any) => [p.id, p]));
+      const bookingMap = new Map<string, any>();
+      (bookings || []).forEach((booking: any) => {
+        if (booking.user_id && !bookingMap.has(booking.user_id)) {
+          bookingMap.set(booking.user_id, booking);
+        }
+      });
+
+      return typedConversations.map((conversation) => {
+        const conversationMessages = (lastMessages || []).filter(
+          (m: any) => m.conversation_id === conversation.id,
+        );
+
+        const latestMessage = conversationMessages[0] as any;
+        const unreadCount = conversationMessages.filter(
+          (m: any) => m.sender_role === 'user' && !m.is_read,
+        ).length;
+
+        const profile = profileMap.get(conversation.user_id);
+        const booking = bookingMap.get(conversation.user_id);
+
+        // Fallback to booking data if profile is incomplete
+        const fullName = profile?.full_name || booking?.applicant_email?.split('@')[0] || null;
+        const phone = profile?.phone || booking?.applicant_phone || null;
+
+        return {
+          ...conversation,
+          profile: { id: conversation.user_id, full_name: fullName, phone },
+          unread_count: unreadCount,
+          last_message_preview: latestMessage?.message_text || null,
+        } as ChatConversation;
+      });
+    },
+    retry: false,
   });
 }
 

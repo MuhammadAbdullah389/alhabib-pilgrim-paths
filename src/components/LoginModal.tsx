@@ -4,7 +4,6 @@ import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Switch } from '@/components/ui/switch';
 import { AlertCircle } from 'lucide-react';
 
 interface LoginModalProps {
@@ -16,7 +15,6 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
   const { signIn, signOut } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [isAdmin, setIsAdmin] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -48,18 +46,6 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
       if (!role) {
         await signOut();
         setError('Unable to verify account role. Please try again.');
-        return;
-      }
-
-      if (isAdmin && role !== 'admin') {
-        await signOut();
-        setError('These credentials are not for admin login.');
-        return;
-      }
-
-      if (!isAdmin && role !== 'user') {
-        await signOut();
-        setError('These credentials are not for user login. Use Admin Login.');
         return;
       }
 
@@ -108,23 +94,6 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              disabled={isLoading}
-            />
-          </div>
-
-          {/* Role Toggle */}
-          <div className="flex items-center justify-between p-3 bg-slate-50 rounded-md">
-            <div>
-              <p className="text-sm font-medium">
-                {isAdmin ? '👤 Admin Mode' : '👥 User Mode'}
-              </p>
-              <p className="text-xs text-muted-foreground">
-                {isAdmin ? 'Access admin panel' : 'Access user dashboard'}
-              </p>
-            </div>
-            <Switch
-              checked={isAdmin}
-              onCheckedChange={setIsAdmin}
               disabled={isLoading}
             />
           </div>

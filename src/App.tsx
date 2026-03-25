@@ -28,6 +28,8 @@ import UserBookings from "./pages/user/UserBookings";
 import UserTestimonials from "./pages/user/UserTestimonials";
 import UserApply from "./pages/user/UserApply";
 import UserProfileSettings from "./pages/user/UserProfileSettings";
+import UserChat from "./pages/user/UserChat";
+import AdminChat from "./pages/admin/AdminChat";
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -113,6 +115,14 @@ const App = () => (
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/dashboard/chat"
+            element={
+              <ProtectedRoute>
+                <UserChat />
+              </ProtectedRoute>
+            }
+          />
 
           {/* Admin Routes */}
           <Route
@@ -160,6 +170,14 @@ const App = () => (
             element={
               <ProtectedRoute requireAdmin>
                 <AdminDocumentReview />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/chat"
+            element={
+              <ProtectedRoute requireAdmin>
+                <AdminChat />
               </ProtectedRoute>
             }
           />
