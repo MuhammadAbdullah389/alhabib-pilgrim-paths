@@ -102,6 +102,7 @@ const UserChat = () => {
         },
         () => {
           queryClient.invalidateQueries({ queryKey: ["chat-messages", conversationId] });
+          queryClient.refetchQueries({ queryKey: ["chat-messages", conversationId], type: "active" });
           queryClient.invalidateQueries({ queryKey: ["admin-chat-conversations"] });
         },
       )

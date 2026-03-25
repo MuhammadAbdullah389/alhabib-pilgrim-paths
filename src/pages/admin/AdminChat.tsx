@@ -119,6 +119,7 @@ const AdminChat = () => {
         () => {
           if (activeConversationId) {
             queryClient.invalidateQueries({ queryKey: ["chat-messages", activeConversationId] });
+            queryClient.refetchQueries({ queryKey: ["chat-messages", activeConversationId], type: "active" });
           }
           queryClient.invalidateQueries({ queryKey: ["admin-chat-conversations"] });
         },
