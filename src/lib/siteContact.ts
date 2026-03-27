@@ -1,7 +1,8 @@
 export const SITE_CONTACT = {
   agencyName: "Deedar-e-Rahamat International Travel & Tours (Pvt)",
   agencyShortName: "Deedar-e-Rahamat",
-  agencyTagline: "International Travel & Tours",
+  agencyTagline: "International Travel & Tours (Pvt)",
+  agencyTaglineCompact: "International Tours",
   primaryPhoneDisplay: "+92 333 5155333",
   primaryPhoneDial: "+923335155333",
   secondaryPhoneDisplay: "+92 300 5511940",

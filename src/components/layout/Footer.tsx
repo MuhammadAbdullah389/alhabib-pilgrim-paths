@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Phone, Mail, MapPin, Star } from "lucide-react";
-import logo from "@/assets/logo.png";
+import logoIcon from "../../../image-removebg-preview.png";
 import { SITE_CONTACT } from "@/lib/siteContact";
 
 const Footer = () => {
@@ -14,7 +14,9 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
           {/* Brand */}
           <div>
-            <img src={logo} alt={SITE_CONTACT.agencyName} className="h-16 w-auto mb-4" />
+            <img src={logoIcon} alt={SITE_CONTACT.agencyName} className="h-16 w-16 rounded-2xl shadow-emerald mb-4" />
+            <p className="font-display text-lg text-primary-foreground mb-1">{SITE_CONTACT.agencyShortName}</p>
+            <p className="text-accent/80 text-xs uppercase tracking-[0.18em] mb-3">{SITE_CONTACT.agencyTaglineCompact ?? SITE_CONTACT.agencyTagline}</p>
             <p className="text-primary-foreground/60 text-sm leading-relaxed mb-4">
               Your trusted partner for Hajj, Umrah, and visa services since 2010. Proudly serving pilgrims from Rawalpindi and across Pakistan with dedication and care.
             </p>

@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, Phone, LogIn } from "lucide-react";
+import { Menu, X, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
-import logo from "@/assets/logo.png";
+import logoIcon from "../../../image-removebg-preview.png";
 import { LoginModal } from "../LoginModal";
 import { useAuth } from "@/lib/authContext";
 import { SITE_CONTACT } from "@/lib/siteContact";
@@ -50,10 +50,10 @@ const Navbar = () => {
     >
       <div className="container mx-auto px-4 flex items-center justify-between h-16 md:h-20">
         <Link to="/" className="flex items-center gap-3 group">
-          <img src={logo} alt={SITE_CONTACT.agencyName} className="h-12 md:h-14 w-auto transition-transform duration-300 group-hover:scale-105" />
+          <img src={logoIcon} alt={SITE_CONTACT.agencyName} className="h-12 w-12 md:h-14 md:w-14 rounded-xl shadow-emerald transition-transform duration-300 group-hover:scale-105" />
           <div className="hidden sm:block">
             <h1 className={`font-display text-lg font-bold leading-tight transition-colors duration-300 ${scrolled ? "text-foreground" : "text-primary-foreground"}`}>{SITE_CONTACT.agencyShortName}</h1>
-            <p className={`text-[10px] tracking-[0.3em] uppercase transition-colors duration-300 ${scrolled ? "text-accent" : "text-gold-light"}`}>{SITE_CONTACT.agencyTagline}</p>
+            <p className={`text-[10px] tracking-[0.18em] uppercase transition-colors duration-300 ${scrolled ? "text-accent" : "text-gold-light"}`}>{SITE_CONTACT.agencyTaglineCompact ?? SITE_CONTACT.agencyTagline}</p>
           </div>
         </Link>
 

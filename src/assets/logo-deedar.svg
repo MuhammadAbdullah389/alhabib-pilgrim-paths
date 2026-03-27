@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Deedar-e-Rahamat logo icon">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0F5E4A"/>
+      <stop offset="100%" stop-color="#0B3D2E"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#F4D98C"/>
+      <stop offset="100%" stop-color="#D4AF37"/>
+    </linearGradient>
+  </defs>
+
+  <rect x="8" y="8" width="240" height="240" rx="44" fill="url(#bg)"/>
+
+  <path d="M58 176C41 142 48 95 87 67c11-8 22-13 34-16-24 11-42 31-47 57-5 24 2 50 21 73 5 7 12 13 19 18-26-5-47-18-56-23z" fill="url(#gold)"/>
+
+  <path d="M158 70l40 13v45l-40 14-40-14V83l40-13zm0 19l-23 8v17l23 8 23-8V97l-23-8z" fill="url(#gold)"/>
+
+  <path d="M70 188l63-62h25l-56 56c26 5 57-1 83-20-17 22-44 36-75 36-15 0-28-3-40-10z" fill="url(#gold)"/>
+
+  <path d="M131 124l-18 47h-18l22-57z" fill="url(#gold)"/>
+
+  <circle cx="198" cy="121" r="3" fill="#F4D98C"/>
+</svg>

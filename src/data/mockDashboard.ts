@@ -53,9 +53,9 @@ export const mockHotels: Hotel[] = [
 ];
 
 export const mockTestimonials: Testimonial[] = [
-  { id: 'T001', name: 'Muhammad Usman', location: 'Narowal', text: 'Alhamdulillah! The Hajj experience with Alhabib Travel was beyond my expectations.', rating: 5, status: 'approved', date: '2026-01-20' },
+  { id: 'T001', name: 'Muhammad Usman', location: 'Rawalpindi', text: 'Alhamdulillah! The Hajj experience with Deedar-e-Rahamat Travel was beyond my expectations.', rating: 5, status: 'approved', date: '2026-01-20' },
   { id: 'T002', name: 'Fatima Bibi', location: 'Sialkot', text: 'We performed Umrah with our family and the entire journey was smooth and hassle-free.', rating: 5, status: 'approved', date: '2026-01-25' },
-  { id: 'T003', name: 'Zainab Ali', location: 'Narowal', text: 'Excellent arrangements! The hotel was very close to Haram. Will recommend to everyone.', rating: 4, status: 'pending', date: '2026-02-14' },
+  { id: 'T003', name: 'Zainab Ali', location: 'Rawalpindi', text: 'Excellent arrangements! The hotel was very close to Haram. Will recommend to everyone.', rating: 4, status: 'pending', date: '2026-02-14' },
   { id: 'T004', name: 'Imran Malik', location: 'Gujranwala', text: 'Very good service but the food could be improved. Overall a wonderful spiritual journey.', rating: 3, status: 'pending', date: '2026-02-18' },
   { id: 'T005', name: 'Nadia Rauf', location: 'Lahore', text: 'Spam content here', rating: 1, status: 'rejected', date: '2026-02-20' },
 ];
