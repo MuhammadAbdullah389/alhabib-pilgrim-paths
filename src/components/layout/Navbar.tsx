@@ -44,38 +44,38 @@ const Navbar = () => {
       transition={{ duration: 0.6, ease: "easeOut" }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         scrolled
-          ? "bg-card/95 backdrop-blur-xl shadow-lg shadow-foreground/5 border-b border-border"
-          : "bg-primary/80 backdrop-blur-md border-b border-emerald-light/10"
+          ? "bg-card/98 backdrop-blur-2xl shadow-elevated border-b border-border/50"
+          : "bg-gradient-emerald/95 backdrop-blur-2xl border-b border-gold/10"
       }`}
     >
       <div className="container mx-auto px-4 flex items-center justify-between h-16 md:h-20">
         <Link to="/" className="flex items-center gap-3 group">
-          <img src={logoIcon} alt={SITE_CONTACT.agencyName} className="h-12 w-12 md:h-14 md:w-14 rounded-xl shadow-emerald transition-transform duration-300 group-hover:scale-105" />
+          <img src={logoIcon} alt={SITE_CONTACT.agencyName} className="h-12 w-12 md:h-14 md:w-14 rounded-xl shadow-emerald transition-all duration-300 group-hover:scale-110 group-hover:shadow-gold" />
           <div className="hidden sm:block">
-            <h1 className={`font-display text-lg font-bold leading-tight transition-colors duration-300 ${scrolled ? "text-foreground" : "text-primary-foreground"}`}>{SITE_CONTACT.agencyShortName}</h1>
-            <p className={`text-[10px] tracking-[0.18em] uppercase transition-colors duration-300 ${scrolled ? "text-accent" : "text-gold-light"}`}>{SITE_CONTACT.agencyTaglineCompact ?? SITE_CONTACT.agencyTagline}</p>
+            <h1 className={`font-display text-xl font-bold leading-tight transition-colors duration-300 ${scrolled ? "text-foreground" : "text-primary-foreground"}`}>{SITE_CONTACT.agencyShortName}</h1>
+            <p className={`text-[10px] tracking-[0.18em] uppercase transition-colors duration-300 font-medium ${scrolled ? "text-accent" : "text-gold-light/90"}`}>{SITE_CONTACT.agencyTaglineCompact ?? SITE_CONTACT.agencyTagline}</p>
           </div>
         </Link>
 
         {/* Desktop Nav */}
-        <div className="hidden lg:flex items-center gap-5">
+        <div className="hidden lg:flex items-center gap-1">
           {navLinks.map((link) => (
             <Link
               key={link.path}
               to={link.path}
-              className={`relative text-sm font-medium transition-colors duration-300 py-1 ${
+              className={`relative px-3.5 py-2 text-sm font-medium transition-all duration-300 rounded-lg ${
                 location.pathname === link.path
                   ? "text-accent"
                   : scrolled
-                    ? "text-foreground hover:text-accent"
-                    : "text-primary-foreground hover:text-accent"
+                    ? "text-foreground/80 hover:text-accent hover:bg-accent/5"
+                    : "text-primary-foreground/90 hover:text-accent hover:bg-white/10"
               }`}
             >
               {link.label}
               {location.pathname === link.path && (
                 <motion.div
                   layoutId="nav-indicator"
-                  className="absolute -bottom-1 left-0 right-0 h-0.5 gradient-gold rounded-full"
+                  className="absolute -bottom-0.5 left-3.5 right-3.5 h-1 gradient-gold rounded-full"
                   transition={{ duration: 0.3 }}
                 />
               )}
@@ -104,7 +104,7 @@ const Navbar = () => {
         {/* Mobile Toggle */}
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className={`lg:hidden p-2 transition-colors ${scrolled ? "text-foreground" : "text-primary-foreground"}`}
+          className={`lg:hidden p-2.5 rounded-lg transition-all duration-200 ${scrolled ? "text-foreground hover:bg-accent/5" : "text-primary-foreground hover:bg-white/10"}`}
           aria-label="Toggle menu"
         >
           {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -119,9 +119,9 @@ const Navbar = () => {
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3 }}
-            className={`lg:hidden backdrop-blur-xl border-t ${scrolled ? "bg-card/98 border-border" : "bg-primary/98 border-emerald-light/10"}`}
+            className={`lg:hidden backdrop-blur-2xl border-t border-opacity-50 ${scrolled ? "bg-card/98 border-border" : "bg-gradient-emerald/98 border-gold/10"}`}
           >
-            <div className="container mx-auto px-4 py-4 flex flex-col gap-1">
+            <div className="container mx-auto px-4 py-4 flex flex-col gap-1.5">
               {navLinks.map((link, i) => (
                 <motion.div
                   key={link.path}
@@ -132,12 +132,12 @@ const Navbar = () => {
                   <Link
                     to={link.path}
                     onClick={() => setIsOpen(false)}
-                    className={`block text-sm font-medium py-3 px-3 rounded-lg transition-all ${
+                    className={`block text-sm font-medium py-3 px-4 rounded-lg transition-all duration-200 ${
                       location.pathname === link.path
-                        ? "text-accent bg-accent/10"
+                        ? "text-accent bg-accent/15 font-semibold"
                         : scrolled
-                          ? "text-foreground hover:text-accent hover:bg-accent/5"
-                          : "text-primary-foreground hover:text-accent hover:bg-accent/5"
+                          ? "text-foreground/80 hover:text-accent hover:bg-accent/8"
+                          : "text-primary-foreground/90 hover:text-accent hover:bg-white/10"
                     }`}
                   >
                     {link.label}

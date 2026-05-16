@@ -39,7 +39,7 @@ export function UserSidebar() {
     <Sidebar collapsible="icon">
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>{!collapsed && "My Account"}</SidebarGroupLabel>
+          <SidebarGroupLabel className="font-display font-semibold text-sm tracking-wider">{!collapsed && "My Account"}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => (
@@ -48,11 +48,11 @@ export function UserSidebar() {
                     <NavLink
                       to={item.url}
                       end={item.url === "/dashboard"}
-                      className="hover:bg-sidebar-accent/50"
-                      activeClassName={isActive(item.url) ? "bg-sidebar-accent text-sidebar-primary font-medium" : ""}
+                      className="hover:bg-sidebar-accent/60 rounded-lg transition-all duration-200"
+                      activeClassName={isActive(item.url) ? "bg-sidebar-primary/20 text-sidebar-primary font-semibold border-l-2 border-sidebar-primary" : ""}
                     >
-                      <item.icon className="mr-2 h-4 w-4" />
-                      {!collapsed && <span>{item.title}</span>}
+                      <item.icon className="mr-3 h-5 w-5" />
+                      {!collapsed && <span className="text-sm">{item.title}</span>}
                     </NavLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -60,13 +60,16 @@ export function UserSidebar() {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
-        <SidebarGroup>
+        <SidebarGroup className="mt-auto">
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton onClick={handleBackToSite} className="hover:bg-sidebar-accent/50">
-                    <ArrowLeft className="mr-2 h-4 w-4" />
-                    {!collapsed && <span>Back to Site</span>}
+                <SidebarMenuButton 
+                  onClick={handleBackToSite} 
+                  className="hover:bg-destructive/15 hover:text-destructive rounded-lg transition-all duration-200"
+                >
+                    <ArrowLeft className="mr-3 h-5 w-5" />
+                    {!collapsed && <span className="text-sm">Back to Site</span>}
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>

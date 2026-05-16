@@ -65,36 +65,37 @@ export function SignIn() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="space-y-1">
-          <div className="flex items-center gap-2 mb-4">
-            <Link to="/" className="text-muted-foreground hover:text-foreground transition">
-              <ArrowLeft className="w-4 h-4" />
+    <div className="min-h-screen bg-gradient-to-b from-background to-background/95 flex items-center justify-center p-4">
+      <Card className="w-full max-w-md shadow-elevated border border-border/60">
+        <CardHeader className="space-y-2 pb-8">
+          <div className="flex items-center gap-2 mb-2">
+            <Link to="/" className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent/5 transition-all duration-200">
+              <ArrowLeft className="w-5 h-5" />
             </Link>
           </div>
-          <CardTitle className="font-display text-2xl">Sign In</CardTitle>
-          <CardDescription>Access your account to view bookings and manage reservations.</CardDescription>
+          <CardTitle className="font-display text-3xl font-bold text-foreground">Welcome Back</CardTitle>
+          <CardDescription className="text-base leading-relaxed pt-2">Access your account to view bookings and manage your pilgrimage reservations.</CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <Label htmlFor="email" className="flex items-center gap-2 mb-2">
-                <Mail className="w-4 h-4" /> Email
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="space-y-2.5">
+              <Label htmlFor="email" className="flex items-center gap-2.5 mb-2.5 text-sm font-semibold text-foreground">
+                <Mail className="w-4 h-4 text-accent" /> Email Address
               </Label>
               <Input
                 id="email"
                 type="email"
-                placeholder="your@email.com"
+                placeholder="you@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                className="h-11 text-base"
               />
             </div>
 
-            <div>
-              <Label htmlFor="password" className="flex items-center gap-2 mb-2">
-                <Lock className="w-4 h-4" /> Password
+            <div className="space-y-2.5">
+              <Label htmlFor="password" className="flex items-center gap-2.5 mb-2.5 text-sm font-semibold text-foreground">
+                <Lock className="w-4 h-4 text-accent" /> Password
               </Label>
               <Input
                 id="password"
@@ -103,10 +104,11 @@ export function SignIn() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                className="h-11 text-base"
               />
             </div>
 
-            <Button type="submit" variant="gold" className="w-full shadow-gold" disabled={isLoading}>
+            <Button type="submit" variant="gold" className="w-full h-12 text-base font-semibold shadow-gold hover:shadow-elevated" disabled={isLoading}>
               {isLoading ? 'Signing in...' : 'Sign In'}
             </Button>
           </form>

@@ -90,18 +90,20 @@ const HeroSection = () => {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
-          className="font-display text-4xl md:text-6xl lg:text-7xl text-primary-foreground font-bold leading-tight mb-6"
+          className="font-display text-5xl md:text-7xl lg:text-8xl text-primary-foreground font-bold leading-tight mb-8 tracking-tight text-balance"
         >
           Your Journey to the
           <br />
-          <span className="text-gradient-gold">Holy Land</span> Begins Here
+          <span className="text-gradient-gold">Holy Land</span>
+          <br />
+          Begins Here
         </motion.h1>
 
         <motion.p
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.6 }}
-          className="text-primary-foreground/80 text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed"
+          className="text-primary-foreground/85 text-lg md:text-xl max-w-3xl mx-auto mb-12 leading-relaxed font-body text-pretty"
         >
           Trusted Hajj & Umrah packages from Rawalpindi. Experience a spiritually fulfilling pilgrimage with our expert guidance and premium services since 2010.
         </motion.p>
@@ -110,20 +112,20 @@ const HeroSection = () => {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.8 }}
-          className="flex flex-col sm:flex-row gap-4 justify-center"
+          className="flex flex-col sm:flex-row gap-5 justify-center"
         >
           <Link to="/hajj-packages">
-            <Button variant="gold" size="lg" className="text-base px-8 shadow-gold">
+            <Button variant="gold" size="lg" className="text-base px-10 font-semibold shadow-gold hover:shadow-elevated">
               Explore Hajj Packages
             </Button>
           </Link>
           <Link to="/umrah-packages">
-            <Button variant="outline-gold" size="lg" className="text-base px-8 border-accent text-primary-foreground">
+            <Button variant="outline-gold" size="lg" className="text-base px-10 border-2 border-gold-light text-primary-foreground font-semibold">
               View Umrah Packages
             </Button>
           </Link>
           <a href={`https://wa.me/${SITE_CONTACT.whatsappNumber}`} target="_blank" rel="noopener noreferrer">
-            <Button variant="whatsapp" size="lg" className="text-base px-8 gap-2">
+            <Button variant="whatsapp" size="lg" className="text-base px-10 gap-2 font-semibold shadow-soft">
               <Phone className="w-5 h-5" /> WhatsApp Us
             </Button>
           </a>
@@ -153,10 +155,10 @@ const HeroSection = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1, delay: 1.2 }}
-          className="mt-8 flex items-center justify-center gap-6 flex-wrap"
+          className="mt-12 flex items-center justify-center gap-6 flex-wrap"
         >
           {["Licensed & Approved", "Since 2010", "1000+ Happy Pilgrims"].map((badge) => (
-            <span key={badge} className="glass-dark px-4 py-2 rounded-full text-xs text-primary-foreground/80 font-medium tracking-wide">
+            <span key={badge} className="glass-dark px-5 py-2.5 rounded-full text-xs text-primary-foreground/90 font-medium tracking-wide border border-gold/20 hover:border-gold/40 transition-all duration-300">
               ✦ {badge}
             </span>
           ))}

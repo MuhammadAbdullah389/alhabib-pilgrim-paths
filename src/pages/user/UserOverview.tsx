@@ -80,10 +80,13 @@ const UserOverview = () => {
 
   return (
     <UserLayout>
-      <div className="space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <h1 className="font-display text-2xl font-bold text-foreground">Welcome Back!</h1>
-          <Button variant="gold" className="w-full sm:w-auto" onClick={() => navigate('/dashboard/apply')}>
+      <div className="space-y-8">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h1 className="font-display text-4xl font-bold text-foreground mb-1">Welcome Back!</h1>
+            <p className="text-foreground/60">Manage your pilgrimage applications and bookings</p>
+          </div>
+          <Button variant="gold" size="lg" className="w-full sm:w-auto font-semibold shadow-gold" onClick={() => navigate('/dashboard/apply')}>
             Apply Again
           </Button>
         </div>
@@ -93,36 +96,36 @@ const UserOverview = () => {
           <DocUploadAlert key={b.id} booking={b} />
         ))}
 
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
           {isLoading
             ? Array.from({ length: 4 }).map((_, i) => (
-                <Card key={i}><CardContent className="p-4"><Skeleton className="h-12 w-full" /></CardContent></Card>
+                <Card key={i}><CardContent className="p-6"><Skeleton className="h-16 w-full rounded-lg" /></CardContent></Card>
               ))
             : stats.map((s) => (
-            <Card key={s.label}>
-              <CardContent className="flex items-center gap-3 p-4">
-                <div className={`p-2 rounded-lg bg-muted ${s.color}`}>
-                  <s.icon className="h-5 w-5" />
+            <Card key={s.label} className="hover:shadow-soft transition-shadow duration-300 border-border/50">
+              <CardContent className="flex items-center gap-4 p-6">
+                <div className={`p-3 rounded-xl bg-muted/80 border border-border/60 ${s.color}`}>
+                  <s.icon className="h-6 w-6" />
                 </div>
-                <div>
-                  <p className="text-xs text-muted-foreground">{s.label}</p>
-                  <p className="text-xl font-bold font-display">{s.value}</p>
+                <div className="flex-1">
+                  <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">{s.label}</p>
+                  <p className="text-3xl font-bold font-display text-foreground mt-1">{s.value}</p>
                 </div>
               </CardContent>
             </Card>
           ))}
         </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Recent Activity</CardTitle>
+        <Card className="border-border/50 shadow-soft">
+          <CardHeader className="border-b border-border/30 pb-6">
+            <CardTitle className="font-display text-2xl font-bold">Recent Activity</CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
+          <CardContent className="pt-6">
+            <div className="space-y-4">
               {(recentActivity.length ? recentActivity : [{ date: "-", text: "No activity yet." }]).map((a, i) => (
-                <div key={i} className="flex flex-col sm:flex-row gap-2 sm:gap-3 items-start">
-                  <Badge variant="secondary" className="text-xs shrink-0 mt-0.5">{a.date}</Badge>
-                  <p className="text-sm text-foreground">{a.text}</p>
+                <div key={i} className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-start p-4 rounded-lg hover:bg-muted/40 transition-colors duration-200">
+                  <Badge variant="secondary" className="text-xs font-semibold shrink-0 mt-0.5 bg-accent/10 text-accent border border-accent/20">{a.date}</Badge>
+                  <p className="text-base text-foreground/80 leading-relaxed">{a.text}</p>
                 </div>
               ))}
             </div>
