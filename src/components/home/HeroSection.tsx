@@ -90,7 +90,7 @@ const HeroSection = () => {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
-          className="font-display text-4xl md:text-6xl lg:text-7xl text-primary-foreground font-bold leading-tight mb-6"
+          className="font-display text-4xl md:text-6xl lg:text-7xl text-white font-bold leading-tight mb-6 drop-shadow-[0_3px_16px_rgba(0,0,0,0.75)]"
         >
           Your Journey to the
           <br />
@@ -101,7 +101,7 @@ const HeroSection = () => {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.6 }}
-          className="text-primary-foreground/80 text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed"
+          className="text-white/90 text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed drop-shadow-[0_2px_10px_rgba(0,0,0,0.65)]"
         >
           Trusted Hajj & Umrah packages from Rawalpindi. Experience a spiritually fulfilling pilgrimage with our expert guidance and premium services since 2010.
         </motion.p>
@@ -118,12 +118,16 @@ const HeroSection = () => {
             </Button>
           </Link>
           <Link to="/umrah-packages">
-            <Button variant="outline-gold" size="lg" className="text-base px-8 border-accent text-primary-foreground">
+            <Button
+              variant="outline-gold"
+              size="lg"
+              className="text-base px-8 border-accent/80 text-white bg-black/10 backdrop-blur-sm"
+            >
               View Umrah Packages
             </Button>
           </Link>
           <a href={`https://wa.me/${SITE_CONTACT.whatsappNumber}`} target="_blank" rel="noopener noreferrer">
-            <Button variant="whatsapp" size="lg" className="text-base px-8 gap-2">
+            <Button variant="whatsapp" size="lg" className="text-base px-8 gap-2 text-white">
               <Phone className="w-5 h-5" /> WhatsApp Us
             </Button>
           </a>

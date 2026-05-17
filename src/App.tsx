@@ -41,13 +41,14 @@ const ScrollToTop = () => {
   return null;
 };
 
-const App = () => (
-  <TooltipProvider>
-    <Toaster />
-    <Sonner />
-    <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-      <ScrollToTop />
-      <Routes>
+const App = () => {
+  return (
+    <TooltipProvider>
+      <Toaster />
+      <Sonner />
+      <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+        <ScrollToTop />
+        <Routes>
           {/* Public Routes */}
           <Route path="/" element={<Index />} />
           <Route path="/hajj-packages" element={<HajjPackages />} />
@@ -183,9 +184,10 @@ const App = () => (
           />
 
           <Route path="*" element={<NotFound />} />
-      </Routes>
-    </BrowserRouter>
-  </TooltipProvider>
-);
+        </Routes>
+      </BrowserRouter>
+    </TooltipProvider>
+  );
+};
 
 export default App;

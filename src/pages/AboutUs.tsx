@@ -7,23 +7,29 @@ import { motion } from "framer-motion";
 import heroKaaba from "@/assets/hero-kaaba.jpg";
 import { SITE_CONTACT } from "@/lib/siteContact";
 
-const stats = [
-  { value: "15+", label: "Years Experience" },
-  { value: "1000+", label: "Happy Pilgrims" },
-  { value: "50+", label: "Hajj Groups" },
-  { value: "100%", label: "Satisfaction Rate" },
-];
-
-const values = [
-  { icon: Shield, title: "Trust & Reliability", desc: "Licensed and government-approved agency ensuring your peace of mind throughout your sacred journey." },
-  { icon: Heart, title: "Dedication & Care", desc: "We treat every pilgrim like family, providing personalized attention and round-the-clock support." },
-  { icon: Award, title: "Premium Quality", desc: "Top-rated hotels near Haram, comfortable transport, and quality meals — no compromises." },
-  { icon: Globe, title: "Expert Guidance", desc: "Our experienced scholars and guides ensure a spiritually enriching and hassle-free experience." },
-  { icon: Users, title: "Community Focused", desc: "Proudly serving pilgrims from Rawalpindi and across Pakistan with deep community roots." },
-  { icon: Star, title: "Highly Rated", desc: "Consistently rated 5 stars by our pilgrims for exceptional service and organization." },
-];
-
 const AboutUs = () => {
+  const stats = [
+    { value: "15+", label: "Years of Service" },
+    { value: "1,000+", label: "Pilgrims Guided" },
+    { value: "24/7", label: "Support" },
+    { value: "5+", label: "Destinations" },
+  ];
+
+  const values = [
+    {
+      title: "Trust",
+      desc: "We keep every promise and guide each journey with honesty and care.",
+    },
+    {
+      title: "Comfort",
+      desc: "We design packages that reduce stress and keep travel as smooth as possible.",
+    },
+    {
+      title: "Guidance",
+      desc: "Our team supports pilgrims before departure, during travel, and after return.",
+    },
+  ];
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
@@ -37,7 +43,7 @@ const AboutUs = () => {
             <p className="text-gold-light tracking-[0.3em] uppercase text-sm mb-3">Our Story</p>
             <h1 className="font-display text-4xl md:text-6xl font-bold text-primary-foreground">About {SITE_CONTACT.agencyShortName}</h1>
             <p className="text-primary-foreground/70 mt-4 max-w-xl mx-auto">
-              Serving pilgrims with dedication, trust, and excellence since 2010.
+              A trusted travel partner for Hajj, Umrah, and sacred journeys across the region.
             </p>
           </ScrollReveal>
         </div>
@@ -98,7 +104,7 @@ const AboutUs = () => {
               <ScrollReveal key={v.title} delay={i * 0.1}>
                 <motion.div whileHover={{ y: -5 }} className="glass-card rounded-2xl p-6 h-full">
                   <div className="w-12 h-12 rounded-xl gradient-gold flex items-center justify-center mb-4 shadow-gold">
-                    <v.icon className="w-6 h-6 text-primary-foreground" />
+                    <Shield className="w-6 h-6 text-primary-foreground" />
                   </div>
                   <h3 className="font-display text-lg font-bold text-foreground mb-2">{v.title}</h3>
                   <p className="text-muted-foreground text-sm leading-relaxed">{v.desc}</p>

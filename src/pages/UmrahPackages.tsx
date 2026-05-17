@@ -25,8 +25,8 @@ const UmrahPackages = () => {
         <div className="relative z-10 text-center pt-16">
           <ScrollReveal>
             <p className="text-gold-light tracking-[0.3em] uppercase text-sm mb-3">Blessed Journey</p>
-            <h1 className="font-display text-4xl md:text-6xl font-bold text-primary-foreground">Umrah Packages</h1>
-            <p className="text-primary-foreground/70 mt-4 max-w-xl mx-auto">
+            <h1 className="font-display text-4xl md:text-6xl font-bold text-white drop-shadow-[0_3px_16px_rgba(0,0,0,0.75)]">Umrah Packages</h1>
+            <p className="text-white/90 mt-4 max-w-xl mx-auto drop-shadow-[0_2px_10px_rgba(0,0,0,0.65)]">
               Year-round Umrah packages including special Ramadan offerings for a spiritually enriching experience.
             </p>
           </ScrollReveal>

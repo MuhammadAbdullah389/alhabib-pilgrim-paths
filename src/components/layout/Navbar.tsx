@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, LogIn } from "lucide-react";
+import { Menu, X, LogIn, Moon, SunMedium } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import logoIcon from "../../../image-removebg-preview.png";
 import { LoginModal } from "../LoginModal";
 import { useAuth } from "@/lib/authContext";
 import { SITE_CONTACT } from "@/lib/siteContact";
+import { useTheme } from "next-themes";
 
 const navLinks = [
   { label: "Home", path: "/" },
@@ -14,7 +15,7 @@ const navLinks = [
   { label: "Umrah Packages", path: "/umrah-packages" },
   { label: "Visa Assistance", path: "/visa-assistance" },
   { label: "About Us", path: "/about-us" },
-  { label: "Contact Us", path: "/contact-us" },
+  { label: "Contact", path: "/contact-us" },
   { label: "FAQs", path: "/faqs" },
   { label: "Track Application", path: "/track-application" },
 ];
@@ -23,8 +24,10 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [loginModalOpen, setLoginModalOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const location = useLocation();
   const { user, signOut } = useAuth();
+  const { theme, resolvedTheme, setTheme } = useTheme();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -32,10 +35,18 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const handleLogout = async () => {
     await signOut();
-    window.location.href = '/';
+    window.location.href = "/";
   };
+
+  const currentTheme = theme === "system" ? resolvedTheme : theme;
+  const isDark = currentTheme === "dark";
+  const toggleTheme = () => setTheme(isDark ? "light" : "dark");
 
   return (
     <motion.nav
@@ -48,22 +59,29 @@ const Navbar = () => {
           : "bg-primary/80 backdrop-blur-md border-b border-emerald-light/10"
       }`}
     >
-      <div className="container mx-auto px-4 flex items-center justify-between h-16 md:h-20">
-        <Link to="/" className="flex items-center gap-3 group">
-          <img src={logoIcon} alt={SITE_CONTACT.agencyName} className="h-12 w-12 md:h-14 md:w-14 rounded-xl shadow-emerald transition-transform duration-300 group-hover:scale-105" />
-          <div className="hidden sm:block">
-            <h1 className={`font-display text-lg font-bold leading-tight transition-colors duration-300 ${scrolled ? "text-foreground" : "text-primary-foreground"}`}>{SITE_CONTACT.agencyShortName}</h1>
-            <p className={`text-[10px] tracking-[0.18em] uppercase transition-colors duration-300 ${scrolled ? "text-accent" : "text-gold-light"}`}>{SITE_CONTACT.agencyTaglineCompact ?? SITE_CONTACT.agencyTagline}</p>
+      <div className="container mx-auto px-4 flex items-center justify-between gap-4 h-16 md:h-20">
+        <Link to="/" className="flex items-center gap-3 group min-w-0 shrink-0">
+          <img
+            src={logoIcon}
+            alt={SITE_CONTACT.agencyName}
+            className="h-12 w-12 md:h-14 md:w-14 rounded-xl shadow-emerald transition-transform duration-300 group-hover:scale-105"
+          />
+          <div className="hidden sm:block min-w-0">
+            <h1 className={`font-display text-lg font-bold leading-tight transition-colors duration-300 ${scrolled ? "text-foreground" : "text-primary-foreground"}`}>
+              {SITE_CONTACT.agencyShortName}
+            </h1>
+            <p className={`text-[10px] tracking-[0.18em] uppercase transition-colors duration-300 ${scrolled ? "text-accent" : "text-gold-light"}`}>
+              {SITE_CONTACT.agencyTaglineCompact ?? SITE_CONTACT.agencyTagline}
+            </p>
           </div>
         </Link>
 
-        {/* Desktop Nav */}
-        <div className="hidden lg:flex items-center gap-5">
+        <div className="hidden lg:flex flex-1 items-center justify-center gap-4 xl:gap-5 whitespace-nowrap min-w-0 px-2">
           {navLinks.map((link) => (
             <Link
               key={link.path}
               to={link.path}
-              className={`relative text-sm font-medium transition-colors duration-300 py-1 ${
+              className={`relative text-sm font-medium transition-colors duration-300 py-1 px-1 ${
                 location.pathname === link.path
                   ? "text-accent"
                   : scrolled
@@ -81,37 +99,54 @@ const Navbar = () => {
               )}
             </Link>
           ))}
+        </div>
+
+        <div className="hidden lg:flex items-center gap-3 shrink-0">
+          <Button
+            type="button"
+            variant="outline"
+            size="icon"
+            className="h-9 w-9"
+            onClick={toggleTheme}
+            aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
+            disabled={!mounted}
+          >
+            {isDark ? <SunMedium className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+          </Button>
           {user ? (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleLogout}
-            >
+            <Button variant="outline" size="sm" onClick={handleLogout}>
               Logout
             </Button>
           ) : (
-            <Button
-              variant="gold"
-              size="sm"
-              className="gap-2"
-              onClick={() => setLoginModalOpen(true)}
-            >
+            <Button variant="gold" size="sm" className="gap-2" onClick={() => setLoginModalOpen(true)}>
               <LogIn className="w-4 h-4" /> Login
             </Button>
           )}
         </div>
 
-        {/* Mobile Toggle */}
-        <button
-          onClick={() => setIsOpen(!isOpen)}
-          className={`lg:hidden p-2 transition-colors ${scrolled ? "text-foreground" : "text-primary-foreground"}`}
-          aria-label="Toggle menu"
-        >
-          {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-        </button>
+        <div className="lg:hidden flex items-center gap-2 shrink-0">
+          <Button
+            type="button"
+            variant="outline"
+            size="icon"
+            className="h-9 w-9"
+            onClick={toggleTheme}
+            aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
+            disabled={!mounted}
+          >
+            {isDark ? <SunMedium className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+          </Button>
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className={`p-2 transition-colors ${scrolled ? "text-foreground" : "text-primary-foreground"}`}
+            aria-label="Toggle menu"
+            style={{ zIndex: 60 }}
+          >
+            {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </button>
+        </div>
       </div>
 
-      {/* Mobile Menu */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -121,7 +156,7 @@ const Navbar = () => {
             transition={{ duration: 0.3 }}
             className={`lg:hidden backdrop-blur-xl border-t ${scrolled ? "bg-card/98 border-border" : "bg-primary/98 border-emerald-light/10"}`}
           >
-            <div className="container mx-auto px-4 py-4 flex flex-col gap-1">
+            <div className="container mx-auto px-4 py-4 flex flex-col gap-1 w-full">
               {navLinks.map((link, i) => (
                 <motion.div
                   key={link.path}
@@ -144,12 +179,18 @@ const Navbar = () => {
                   </Link>
                 </motion.div>
               ))}
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full mt-2 gap-2"
+                onClick={toggleTheme}
+                disabled={!mounted}
+              >
+                {isDark ? <SunMedium className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+                {isDark ? "Light Mode" : "Dark Mode"}
+              </Button>
               {user ? (
-                <Button
-                  variant="outline"
-                  className="w-full mt-2"
-                  onClick={handleLogout}
-                >
+                <Button variant="outline" className="w-full mt-2" onClick={handleLogout}>
                   Logout
                 </Button>
               ) : (

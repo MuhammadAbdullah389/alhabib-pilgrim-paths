@@ -14,7 +14,7 @@ const contactItems = [
 
 const ContactSection = () => {
   return (
-    <section className="py-24 gradient-emerald text-primary-foreground relative overflow-hidden">
+    <section className="py-24 gradient-emerald text-white relative overflow-hidden">
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent/30 to-transparent" />
       <div className="absolute -top-40 -right-40 w-80 h-80 rounded-full border border-accent/10" />
       <div className="absolute -bottom-32 -left-32 w-64 h-64 rounded-full border border-accent/10" />
@@ -39,16 +39,16 @@ const ContactSection = () => {
                   className="flex items-start gap-4 glass-dark rounded-xl p-4"
                 >
                   <div className="w-11 h-11 rounded-lg gradient-gold flex items-center justify-center shrink-0 shadow-gold">
-                    <item.icon className="w-5 h-5 text-primary-foreground" />
+                    <item.icon className="w-5 h-5 text-white" />
                   </div>
                   <div>
                     <p className="text-gold-light text-xs font-medium mb-1 uppercase tracking-wider">{item.label}</p>
                     {item.href ? (
-                      <a href={item.href} className="text-primary-foreground/90 hover:text-accent transition-colors whitespace-pre-line text-sm">
+                      <a href={item.href} className="text-white/90 hover:text-accent transition-colors whitespace-pre-line text-sm">
                         {item.value}
                       </a>
                     ) : (
-                      <p className="text-primary-foreground/90 whitespace-pre-line text-sm">{item.value}</p>
+                      <p className="text-white/90 whitespace-pre-line text-sm">{item.value}</p>
                     )}
                   </div>
                 </motion.div>
