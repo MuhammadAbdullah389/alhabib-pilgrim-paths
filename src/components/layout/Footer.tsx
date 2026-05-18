@@ -14,7 +14,7 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
           {/* Brand */}
           <div>
-            <img src={logoIcon} alt={SITE_CONTACT.agencyName} className="h-16 w-16 rounded-2xl shadow-emerald mb-4" />
+            <img src={logoIcon} alt={SITE_CONTACT.agencyName} className="h-16 w-16 rounded-2xl shadow-emerald mb-4" loading="lazy" decoding="async" />
             <p className="font-display text-lg text-primary-foreground mb-1">{SITE_CONTACT.agencyShortName}</p>
             <p className="text-accent/80 text-xs uppercase tracking-[0.18em] mb-3">{SITE_CONTACT.agencyTaglineCompact ?? SITE_CONTACT.agencyTagline}</p>
             <p className="text-primary-foreground/60 text-sm leading-relaxed mb-4">

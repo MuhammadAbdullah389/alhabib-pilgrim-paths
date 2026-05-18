@@ -22,7 +22,7 @@ const PackageCard = ({ pkg, onViewDetails }: PackageCardProps) => {
       className="group glass-card rounded-2xl overflow-hidden shimmer-hover hover:shadow-gold transition-all duration-500 flex flex-col border border-accent/25 shadow-[0_10px_30px_rgba(0,0,0,0.08)]"
     >
       <div className="relative h-52 overflow-hidden">
-        <img src={image} alt={pkg.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+        <img src={image} alt={pkg.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" loading="lazy" decoding="async" />
         {pkg.featured && (
           <div className="absolute top-4 right-4 gradient-gold px-3 py-1.5 rounded-full flex items-center gap-1.5 text-xs font-semibold text-primary-foreground shadow-gold">
             <Star className="w-3 h-3 fill-current" /> Popular

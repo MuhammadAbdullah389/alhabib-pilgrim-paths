@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import React, { useMemo, useState, Suspense } from "react";
 import UserLayout from "@/components/user/UserLayout";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -11,7 +11,7 @@ import { PlusCircle } from "lucide-react";
 import { useCreateBooking, usePackages } from "@/hooks/useSupabase";
 import type { PackageType } from "@/data/packages";
 import PackageCard from "@/components/packages/PackageCard";
-import PackageModal from "@/components/packages/PackageModal";
+const PackageModal = React.lazy(() => import("@/components/packages/PackageModal"));
 import { useAuth } from "@/lib/authContext";
 import { toast } from "sonner";
 
@@ -233,7 +233,9 @@ const UserApply = () => {
         )}
       </div>
 
-      <PackageModal pkg={selectedPkg} open={!!selectedPkg} onClose={() => setSelectedPkg(null)} portalMode />
+      <Suspense fallback={null}>
+        <PackageModal pkg={selectedPkg} open={!!selectedPkg} onClose={() => setSelectedPkg(null)} portalMode />
+      </Suspense>
     </UserLayout>
   );
 };

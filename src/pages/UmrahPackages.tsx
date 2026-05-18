@@ -1,8 +1,8 @@
-import { useState } from "react";
+import React, { useState, Suspense } from "react";
 import { usePackages } from "@/hooks/useSupabase";
 import { PackageType } from "@/data/packages";
 import PackageCard from "@/components/packages/PackageCard";
-import PackageModal from "@/components/packages/PackageModal";
+const PackageModal = React.lazy(() => import("@/components/packages/PackageModal"));
 import ScrollReveal from "@/components/animations/ScrollReveal";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
@@ -20,7 +20,7 @@ const UmrahPackages = () => {
 
       {/* Hero Banner */}
       <section className="relative h-[50vh] flex items-center justify-center overflow-hidden">
-        <img src={masjidNabawi} alt="Masjid-e-Nabawi" className="absolute inset-0 w-full h-full object-cover" />
+        <img src={masjidNabawi} alt="Masjid-e-Nabawi" className="absolute inset-0 w-full h-full object-cover" fetchPriority="high" decoding="async" />
         <div className="absolute inset-0 gradient-hero" />
         <div className="relative z-10 text-center pt-16">
           <ScrollReveal>
@@ -54,7 +54,9 @@ const UmrahPackages = () => {
         </div>
       </section>
 
-      <PackageModal pkg={selectedPkg} open={!!selectedPkg} onClose={() => setSelectedPkg(null)} />
+      <Suspense fallback={null}>
+        <PackageModal pkg={selectedPkg} open={!!selectedPkg} onClose={() => setSelectedPkg(null)} />
+      </Suspense>
       <Footer />
       <WhatsAppButton />
     </div>

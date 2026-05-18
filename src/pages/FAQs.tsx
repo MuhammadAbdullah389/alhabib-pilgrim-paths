@@ -7,6 +7,7 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import WhatsAppButton from "@/components/layout/WhatsAppButton";
 import { SITE_CONTACT } from "@/lib/siteContact";
+import heroKaaba from "@/assets/hero-kaaba.jpg";
 
 const faqs = [
   {
@@ -42,18 +43,27 @@ const FAQs = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
 
-      <section className="pt-28 pb-20">
+      <section className="relative h-[50vh] flex items-center justify-center overflow-hidden">
+        <img src={heroKaaba} alt="FAQs" className="absolute inset-0 w-full h-full object-cover" fetchPriority="high" decoding="async" />
+        <div className="absolute inset-0 gradient-hero" />
+        <div className="relative z-10 text-center pt-16">
+          <ScrollReveal>
+            <p className="text-gold-light tracking-[0.3em] uppercase text-sm mb-3">Help Center</p>
+            <h1 className="font-display text-4xl md:text-6xl font-bold text-white drop-shadow-[0_3px_16px_rgba(0,0,0,0.75)]">Frequently Asked Questions</h1>
+            <p className="text-white/90 mt-4 max-w-xl mx-auto drop-shadow-[0_2px_10px_rgba(0,0,0,0.65)]">
+              Find answers to common questions about our Hajj, Umrah, and visa services.
+            </p>
+          </ScrollReveal>
+        </div>
+      </section>
+
+      <section className="py-20">
         <div className="container mx-auto px-4 max-w-3xl">
           <ScrollReveal>
             <div className="text-center mb-14">
               <div className="w-16 h-16 mx-auto mb-5 rounded-2xl gradient-gold flex items-center justify-center shadow-gold">
                 <HelpCircle className="w-8 h-8 text-primary-foreground" />
               </div>
-              <h1 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-3">Frequently Asked Questions</h1>
-              <p className="text-muted-foreground max-w-lg mx-auto">
-                Find answers to common questions about our Hajj, Umrah, and visa services.
-              </p>
-              <div className="section-divider w-24 mx-auto mt-4" />
             </div>
           </ScrollReveal>
 

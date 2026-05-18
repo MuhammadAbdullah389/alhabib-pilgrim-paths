@@ -64,7 +64,7 @@ const ContactUs = () => {
 
       {/* Hero */}
       <section className="relative h-[50vh] flex items-center justify-center overflow-hidden">
-        <img src={heroKaaba} alt="Contact" className="absolute inset-0 w-full h-full object-cover" />
+        <img src={heroKaaba} alt="Contact" className="absolute inset-0 w-full h-full object-cover" fetchPriority="high" decoding="async" />
         <div className="absolute inset-0 gradient-hero" />
         <div className="relative z-10 text-center pt-16">
           <ScrollReveal>

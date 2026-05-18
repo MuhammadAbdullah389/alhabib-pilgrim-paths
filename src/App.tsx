@@ -1,35 +1,35 @@
-import { useEffect } from "react";
+import { useEffect, lazy, Suspense } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
-import Index from "./pages/Index";
-import HajjPackages from "./pages/HajjPackages";
-import UmrahPackages from "./pages/UmrahPackages";
-import VisaAssistance from "./pages/VisaAssistance";
-import FAQs from "./pages/FAQs";
-import AboutUs from "./pages/AboutUs";
-import ContactUs from "./pages/ContactUs";
-import TrackApplication from "./pages/TrackApplication";
-import NotFound from "./pages/NotFound";
-import SignIn from "./pages/auth/SignIn";
-import SignUp from "./pages/auth/SignUp";
-import ForcedPasswordChange from "./pages/portal/ForcedPasswordChange";
-import DocumentUploadPortal from "./pages/portal/DocumentUploadPortal";
-import AdminOverview from "./pages/admin/AdminOverview";
-import AdminPackages from "./pages/admin/AdminPackages";
-import AdminHotels from "./pages/admin/AdminHotels";
-import AdminBookings from "./pages/admin/AdminBookings";
-import AdminTestimonials from "./pages/admin/AdminTestimonials";
-import AdminDocumentReview from "./pages/admin/AdminDocumentReview";
-import UserOverview from "./pages/user/UserOverview";
-import UserBookings from "./pages/user/UserBookings";
-import UserTestimonials from "./pages/user/UserTestimonials";
-import UserApply from "./pages/user/UserApply";
-import UserProfileSettings from "./pages/user/UserProfileSettings";
-import UserChat from "./pages/user/UserChat";
-import AdminChat from "./pages/admin/AdminChat";
+const Index = lazy(() => import("./pages/Index"));
+const HajjPackages = lazy(() => import("./pages/HajjPackages"));
+const UmrahPackages = lazy(() => import("./pages/UmrahPackages"));
+const VisaAssistance = lazy(() => import("./pages/VisaAssistance"));
+const FAQs = lazy(() => import("./pages/FAQs"));
+const AboutUs = lazy(() => import("./pages/AboutUs"));
+const ContactUs = lazy(() => import("./pages/ContactUs"));
+const TrackApplication = lazy(() => import("./pages/TrackApplication"));
+const NotFound = lazy(() => import("./pages/NotFound"));
+const SignIn = lazy(() => import("./pages/auth/SignIn"));
+const SignUp = lazy(() => import("./pages/auth/SignUp"));
+const ForcedPasswordChange = lazy(() => import("./pages/portal/ForcedPasswordChange"));
+const DocumentUploadPortal = lazy(() => import("./pages/portal/DocumentUploadPortal"));
+const AdminOverview = lazy(() => import("./pages/admin/AdminOverview"));
+const AdminPackages = lazy(() => import("./pages/admin/AdminPackages"));
+const AdminHotels = lazy(() => import("./pages/admin/AdminHotels"));
+const AdminBookings = lazy(() => import("./pages/admin/AdminBookings"));
+const AdminTestimonials = lazy(() => import("./pages/admin/AdminTestimonials"));
+const AdminDocumentReview = lazy(() => import("./pages/admin/AdminDocumentReview"));
+const UserOverview = lazy(() => import("./pages/user/UserOverview"));
+const UserBookings = lazy(() => import("./pages/user/UserBookings"));
+const UserTestimonials = lazy(() => import("./pages/user/UserTestimonials"));
+const UserApply = lazy(() => import("./pages/user/UserApply"));
+const UserProfileSettings = lazy(() => import("./pages/user/UserProfileSettings"));
+const UserChat = lazy(() => import("./pages/user/UserChat"));
+const AdminChat = lazy(() => import("./pages/admin/AdminChat"));
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -48,7 +48,14 @@ const App = () => {
       <Sonner />
       <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <ScrollToTop />
-        <Routes>
+        <Suspense
+          fallback={
+            <div className="min-h-[60vh] flex items-center justify-center">
+              <div className="animate-pulse text-muted-foreground">Loading…</div>
+            </div>
+          }
+        >
+          <Routes>
           {/* Public Routes */}
           <Route path="/" element={<Index />} />
           <Route path="/hajj-packages" element={<HajjPackages />} />
@@ -184,7 +191,8 @@ const App = () => {
           />
 
           <Route path="*" element={<NotFound />} />
-        </Routes>
+          </Routes>
+        </Suspense>
       </BrowserRouter>
     </TooltipProvider>
   );

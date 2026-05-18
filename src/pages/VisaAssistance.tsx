@@ -105,7 +105,7 @@ const VisaAssistance = () => {
 
       {/* Hero */}
       <section className="relative h-[50vh] flex items-center justify-center overflow-hidden">
-        <img src={visaImage} alt="Visa Assistance" className="absolute inset-0 w-full h-full object-cover" />
+        <img src={visaImage} alt="Visa Assistance" className="absolute inset-0 w-full h-full object-cover" fetchPriority="high" decoding="async" />
         <div className="absolute inset-0 gradient-hero" />
         <div className="relative z-10 text-center pt-16">
           <ScrollReveal>
