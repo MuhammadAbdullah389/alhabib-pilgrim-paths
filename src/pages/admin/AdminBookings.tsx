@@ -13,7 +13,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { supabase } from "@/lib/supabase";
 import { useAllBookings, useCreateBooking, usePackages, useProvisionApplicantCredentials, useUpdateBookingStatus, type Booking } from "@/hooks/useSupabase";
 import { toast } from "sonner";
-import { Search, Filter, Plus, Eye } from "lucide-react";
+import { Search, Filter, Plus, Eye, CheckSquare, Square, FileText, Clock, AlertCircle } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 
 type BookingClosureLog = {
@@ -97,6 +97,14 @@ const AdminBookings = () => {
   const [filterType, setFilterType] = useState<string>("all");
   const [filterStatus, setFilterStatus] = useState<string>("all");
   const [search, setSearch] = useState("");
+  const [selectedBookingIds, setSelectedBookingIds] = useState<Set<string>>(new Set());
+  const [bulkStatusDialog, setBulkStatusDialog] = useState(false);
+  const [bulkStatusTarget, setBulkStatusTarget] = useState<Booking['status']>("documents");
+  const [bulkProgressOpen, setBulkProgressOpen] = useState(false);
+  const [notesHistoryOpen, setNotesHistoryOpen] = useState(false);
+  const [selectedNotesBooking, setSelectedNotesBooking] = useState<Booking | null>(null);
+  const [newNote, setNewNote] = useState("");
+  const [bookingNotes, setBookingNotes] = useState<Array<{ id: string; note: string; author: string; createdAt: string }>>([]);
   const [initForm, setInitForm] = useState({
     packageType: "hajj" as "hajj" | "umrah",
     packageId: "",
@@ -574,6 +582,111 @@ const AdminBookings = () => {
     }
   };
 
+  const toggleSelectBooking = (id: string) => {
+    const newSet = new Set(selectedBookingIds);
+    if (newSet.has(id)) {
+      newSet.delete(id);
+    } else {
+      newSet.add(id);
+    }
+    setSelectedBookingIds(newSet);
+  };
+
+  const toggleSelectAll = (bookingList: Booking[]) => {
+    if (selectedBookingIds.size === bookingList.length && bookingList.length > 0) {
+      setSelectedBookingIds(new Set());
+    } else {
+      setSelectedBookingIds(new Set(bookingList.map(b => b.id)));
+    }
+  };
+
+  const handleBulkStatusUpdate = async () => {
+    const selectedList = Array.from(selectedBookingIds);
+    if (selectedList.length === 0) {
+      toast.error("Please select at least one booking");
+      return;
+    }
+
+    setBulkProgressOpen(true);
+    let successCount = 0;
+    let failCount = 0;
+
+    for (const id of selectedList) {
+      try {
+        await new Promise<void>((resolve, reject) => {
+          updateBookingStatus(
+            { id, status: bulkStatusTarget },
+            {
+              onSuccess: () => {
+                successCount++;
+                resolve();
+              },
+              onError: (error) => {
+                failCount++;
+                reject(error);
+              },
+            }
+          );
+        });
+      } catch (error) {
+        // Continue to next booking
+      }
+    }
+
+    toast.success(`Bulk update: ${successCount} succeeded, ${failCount} failed`);
+    setBulkStatusDialog(false);
+    setBulkProgressOpen(false);
+    setSelectedBookingIds(new Set());
+    await refetch();
+  };
+
+  const openNotesHistory = async (booking: Booking) => {
+    setSelectedNotesBooking(booking);
+    try {
+      const { data, error } = await supabase
+        .from('booking_notes')
+        .select('id, note, author, created_at')
+        .eq('booking_id', booking.id)
+        .order('created_at', { ascending: false });
+      if (error) throw error;
+      setBookingNotes((data || []) as any);
+    } catch (error) {
+      toast.error("Failed to load notes history");
+    }
+    setNotesHistoryOpen(true);
+  };
+
+  const addNoteToBooking = async () => {
+    if (!selectedNotesBooking || !newNote.trim()) {
+      toast.error("Please enter a note");
+      return;
+    }
+
+    try {
+      const {
+        data: { user: currentUser },
+      } = await supabase.auth.getUser();
+
+      const { error } = await supabase
+        .from('booking_notes')
+        .insert([
+          {
+            booking_id: selectedNotesBooking.id,
+            note: newNote.trim(),
+            author: currentUser?.email || 'Unknown',
+            created_at: new Date().toISOString(),
+          },
+        ]);
+
+      if (error) throw error;
+      toast.success("Note added");
+      setNewNote("");
+      await openNotesHistory(selectedNotesBooking);
+    } catch (error: any) {
+      toast.error(error?.message || "Failed to add note");
+    }
+  };
+
   const handleSaveBookingDetails = async () => {
     if (!detailsBooking) return;
 
@@ -663,6 +776,22 @@ const AdminBookings = () => {
           </Select>
         </div>
 
+        {selectedBookingIds.size > 0 && (
+          <Card className="border-accent/40 bg-accent/5">
+            <CardContent className="py-3 px-4 flex items-center justify-between flex-wrap gap-3">
+              <p className="text-sm font-medium">{selectedBookingIds.size} booking(s) selected</p>
+              <div className="flex gap-2 flex-wrap">
+                <Button size="sm" variant="outline" onClick={() => setBulkStatusDialog(true)}>
+                  Update Status
+                </Button>
+                <Button size="sm" variant="outline" onClick={() => setSelectedBookingIds(new Set())}>
+                  Clear Selection
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         <Card>
           <div className="px-6 pt-5 pb-2">
             <h2 className="text-lg font-semibold text-foreground">Active Applications</h2>
@@ -672,6 +801,14 @@ const AdminBookings = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
+                    <TableHead className="w-8">
+                      <input
+                        type="checkbox"
+                        checked={selectedBookingIds.size === activeBookings.length && activeBookings.length > 0}
+                        onChange={() => toggleSelectAll(activeBookings)}
+                        className="cursor-pointer"
+                      />
+                    </TableHead>
                     <TableHead>ID</TableHead>
                     <TableHead>Customer</TableHead>
                     <TableHead className="hidden md:table-cell">Package</TableHead>
@@ -684,11 +821,19 @@ const AdminBookings = () => {
                   {isLoading ? (
                     Array.from({ length: 6 }).map((_, i) => (
                       <TableRow key={i}>
-                        <TableCell colSpan={6}><Skeleton className="h-8 w-full" /></TableCell>
+                        <TableCell colSpan={7}><Skeleton className="h-8 w-full" /></TableCell>
                       </TableRow>
                     ))
                   ) : activeBookings.map((b) => (
-                    <TableRow key={b.id}>
+                    <TableRow key={b.id} className={selectedBookingIds.has(b.id) ? "bg-accent/5" : ""}>
+                      <TableCell>
+                        <input
+                          type="checkbox"
+                          checked={selectedBookingIds.has(b.id)}
+                          onChange={() => toggleSelectBooking(b.id)}
+                          className="cursor-pointer"
+                        />
+                      </TableCell>
                       <TableCell className="font-mono text-xs">{b.booking_code}</TableCell>
                       <TableCell>
                         <div>
@@ -723,6 +868,15 @@ const AdminBookings = () => {
                           ) : (
                             <span className="text-xs text-muted-foreground">Done</span>
                           )}
+
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="gap-1"
+                            onClick={() => openNotesHistory(b)}
+                          >
+                            <FileText className="h-3 w-3" /> Notes
+                          </Button>
 
                           <Button
                             size="sm"
@@ -1344,6 +1498,106 @@ const AdminBookings = () => {
                 disabled={isClosingBooking || !closeReason.trim()}
               >
                 {isClosingBooking ? "Closing..." : "Reject & Close"}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        <Dialog open={bulkStatusDialog} onOpenChange={setBulkStatusDialog}>
+          <DialogContent className="max-w-sm">
+            <DialogHeader>
+              <DialogTitle>Bulk Status Update</DialogTitle>
+              <DialogDescription>
+                Update status for {selectedBookingIds.size} booking(s)
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label>New Status</Label>
+                <Select value={bulkStatusTarget} onValueChange={(value) => setBulkStatusTarget(value as Booking['status'])}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="pending">Pending</SelectItem>
+                    <SelectItem value="documents">Documents</SelectItem>
+                    <SelectItem value="visa">Visa Processing</SelectItem>
+                    <SelectItem value="confirmed">Confirmed</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="rounded-md border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800">
+                <AlertCircle className="w-4 h-4 inline mr-2" />
+                All selected bookings will be moved to <strong>{bulkStatusTarget}</strong> status.
+              </div>
+            </div>
+
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setBulkStatusDialog(false)}>
+                Cancel
+              </Button>
+              <Button variant="gold" onClick={handleBulkStatusUpdate} disabled={bulkProgressOpen}>
+                {bulkProgressOpen ? "Processing..." : "Apply to All"}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        <Dialog open={notesHistoryOpen} onOpenChange={setNotesHistoryOpen}>
+          <DialogContent className="max-w-2xl max-h-[70vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>Application Notes</DialogTitle>
+              <DialogDescription>
+                {selectedNotesBooking ? `Notes for ${selectedNotesBooking.booking_code}` : "Application notes and history"}
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="space-y-4">
+              {/* Add New Note Section */}
+              <div className="space-y-2 border-b pb-4">
+                <Label>Add New Note</Label>
+                <Textarea
+                  value={newNote}
+                  onChange={(e) => setNewNote(e.target.value)}
+                  placeholder="Type your internal note here..."
+                  rows={3}
+                  className="text-sm"
+                />
+                <Button size="sm" onClick={addNoteToBooking} variant="gold">
+                  Add Note
+                </Button>
+              </div>
+
+              {/* Notes History */}
+              <div className="space-y-3">
+                <h3 className="font-semibold text-sm">Notes History</h3>
+                {bookingNotes.length === 0 ? (
+                  <div className="text-center py-6 text-muted-foreground text-sm">
+                    No notes yet. Add one to get started.
+                  </div>
+                ) : (
+                  <div className="space-y-3 max-h-[300px] overflow-y-auto">
+                    {bookingNotes.map((note) => (
+                      <div key={note.id} className="rounded-lg border p-3 bg-muted/30 text-sm space-y-1">
+                        <div className="flex items-center justify-between">
+                          <span className="font-medium text-xs text-accent">{note.author}</span>
+                          <span className="text-xs text-muted-foreground">
+                            {new Date(note.createdAt).toLocaleString()}
+                          </span>
+                        </div>
+                        <p className="text-foreground/90">{note.note}</p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setNotesHistoryOpen(false)}>
+                Close
               </Button>
             </DialogFooter>
           </DialogContent>
