@@ -27,6 +27,8 @@ const AdminDocumentReview = lazy(() => import("./pages/admin/AdminDocumentReview
 const AdminTraining = lazy(() => import("./pages/admin/AdminTraining"));
 const RitualGuidance = lazy(() => import("./pages/RitualGuidance"));
 const AdminRitualGuidance = lazy(() => import("./pages/admin/AdminRitualGuidance"));
+const UserComplaints = lazy(() => import("./pages/user/UserComplaints"));
+const AdminComplaints = lazy(() => import("./pages/admin/AdminComplaints"));
 const UserOverview = lazy(() => import("./pages/user/UserOverview"));
 const UserBookings = lazy(() => import("./pages/user/UserBookings"));
 const UserTestimonials = lazy(() => import("./pages/user/UserTestimonials"));
@@ -130,6 +132,14 @@ const App = () => {
             }
           />
           <Route
+            path="/dashboard/complaints"
+            element={
+              <ProtectedRoute>
+                <UserComplaints />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/dashboard/chat"
             element={
               <ProtectedRoute>
@@ -200,6 +210,14 @@ const App = () => {
             element={
               <ProtectedRoute allowedRoles={["admin"]}>
                 <AdminRitualGuidance />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/complaints"
+            element={
+              <ProtectedRoute allowedRoles={["admin"]}>
+                <AdminComplaints />
               </ProtectedRoute>
             }
           />

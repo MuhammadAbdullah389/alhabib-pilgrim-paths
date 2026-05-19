@@ -9,6 +9,7 @@ import {
   ArrowLeft,
   CalendarDays,
   Book,
+  AlertTriangle,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -35,6 +36,7 @@ const adminItems: Array<{ title: string; url: string; icon: any; roles?: StaffRo
   { title: "Bookings", url: "/admin/bookings", icon: ClipboardList, roles: ["admin", "support"] },
   { title: "Testimonials", url: "/admin/testimonials", icon: MessageSquare, roles: ["admin", "support"] },
   { title: "Documents", url: "/admin/documents", icon: FileText, roles: ["admin", "visa_officer"] },
+  { title: "Complaints", url: "/admin/complaints", icon: AlertTriangle, roles: ["admin", "support"] },
   { title: "Chat", url: "/admin/chat", icon: MessageCircle, roles: ["admin", "support"] },
   { title: "Training Sessions", url: "/admin/training", icon: CalendarDays, roles: ["admin"] },
   { title: "Ritual Guidance", url: "/admin/ritual-guidance", icon: Book, roles: ["admin"] },

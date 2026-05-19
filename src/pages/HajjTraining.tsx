@@ -24,13 +24,6 @@ const formatTimeRange = (start?: string | null, end?: string | null) => {
 
 const getPhotoUrls = (session: TrainingSession) => {
   if (Array.isArray(session.photo_urls)) return session.photo_urls.filter(Boolean);
-  if (!session.photo_urls) return [] as string[];
-  if (typeof session.photo_urls === "string") {
-    return session.photo_urls
-      .split(/\n|,/)
-      .map((v) => v.trim())
-      .filter(Boolean);
-  }
   return [] as string[];
 };
 

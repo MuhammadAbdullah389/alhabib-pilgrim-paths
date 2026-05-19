@@ -138,6 +138,21 @@ export interface RitualGuidanceSection {
   updated_at: string;
 }
 
+export interface Complaint {
+  id: string;
+  user_id: string;
+  booking_id: string | null;
+  title: string;
+  category: 'hotel_issue' | 'transport_issue' | 'guide_issue' | 'document_issue' | 'package_issue' | 'general';
+  description: string;
+  proof_image_url: string | null;
+  status: 'pending' | 'in_progress' | 'resolved' | 'rejected';
+  admin_response: string | null;
+  assigned_to: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface BookingDocument {
   id: string;
   booking_id: string;
@@ -1033,6 +1048,106 @@ export function useDeleteRitualGuidanceSection() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['ritual-guidance-public'] });
       queryClient.invalidateQueries({ queryKey: ['ritual-guidance-admin'] });
+    },
+  });
+}
+
+// ========== COMPLAINTS ==========
+
+export function useUserComplaints(userId: string) {
+  return useQuery({
+    queryKey: ['complaints-user', userId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('complaints')
+        .select('*')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false });
+      if (error) throw error;
+      return data as Complaint[];
+    },
+    enabled: !!userId,
+  });
+}
+
+export function useAllComplaints() {
+  return useQuery({
+    queryKey: ['complaints-admin'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('complaints')
+        .select('*')
+        .order('created_at', { ascending: false });
+      if (error) throw error;
+      return data as Complaint[];
+    },
+  });
+}
+
+export function useCreateComplaint() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (payload: Omit<Complaint, 'id' | 'created_at' | 'updated_at'>) => {
+      const { data, error } = await supabase
+        .from('complaints')
+        .insert([payload])
+        .select()
+        .single();
+      if (error) throw error;
+      return data as Complaint;
+    },
+    onSuccess: (complaint) => {
+      queryClient.invalidateQueries({ queryKey: ['complaints-user', complaint.user_id] });
+      queryClient.invalidateQueries({ queryKey: ['complaints-admin'] });
+    },
+  });
+}
+
+export function useUpdateComplaint() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, ...updates }: Partial<Complaint> & { id: string }) => {
+      const { data, error } = await supabase
+        .from('complaints')
+        .update(updates)
+        .eq('id', id)
+        .select()
+        .single();
+      if (error) throw error;
+      return data as Complaint;
+    },
+    onSuccess: (complaint) => {
+      queryClient.invalidateQueries({ queryKey: ['complaints-user', complaint.user_id] });
+      queryClient.invalidateQueries({ queryKey: ['complaints-admin'] });
+    },
+  });
+}
+
+export function useDeleteComplaint() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from('complaints').delete().eq('id', id);
+      if (error) throw error;
+      return id;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['complaints-admin'] });
+    },
+  });
+}
+
+export function useStaffProfiles() {
+  return useQuery({
+    queryKey: ['staff-profiles'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('id, full_name, role')
+        .in('role', ['admin', 'support', 'visa_officer'])
+        .order('full_name', { ascending: true });
+      if (error) throw error;
+      return data as Array<{ id: string; full_name: string; role: string }>;
     },
   });
 }

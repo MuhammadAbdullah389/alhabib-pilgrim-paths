@@ -1,4 +1,4 @@
-import { LayoutDashboard, ClipboardList, MessageSquare, ArrowLeft, PlusCircle, UserCog, MessageCircle } from "lucide-react";
+import { LayoutDashboard, ClipboardList, MessageSquare, ArrowLeft, PlusCircle, UserCog, MessageCircle, AlertTriangle } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/lib/authContext";
@@ -14,6 +14,7 @@ const items = [
   { title: "Apply Again", url: "/dashboard/apply", icon: PlusCircle },
   { title: "Support Chat", url: "/dashboard/chat", icon: MessageCircle },
   { title: "My Testimonials", url: "/dashboard/testimonials", icon: MessageSquare },
+  { title: "My Complaints", url: "/dashboard/complaints", icon: AlertTriangle },
   { title: "Profile Settings", url: "/dashboard/profile", icon: UserCog },
 ];
 
