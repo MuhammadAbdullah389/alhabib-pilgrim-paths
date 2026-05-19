@@ -4,10 +4,13 @@ import { useAuth } from '@/lib/authContext';
 interface ProtectedRouteProps {
   children: React.ReactNode;
   requireAdmin?: boolean;
+  allowedRoles?: Array<'admin' | 'support' | 'visa_officer'>;
 }
 
-export function ProtectedRoute({ children, requireAdmin = false }: ProtectedRouteProps) {
-  const { user, profile, isAdmin, isLoading } = useAuth();
+export function ProtectedRoute({ children, requireAdmin = false, allowedRoles }: ProtectedRouteProps) {
+  const { user, profile, isLoading } = useAuth();
+  const role = profile?.role ?? 'user';
+  const enforcedRoles = allowedRoles ?? (requireAdmin ? ['admin'] : null);
 
   // Only block while loading if we don't have a session yet.
   // This avoids full-page loader flashes on token refresh/tab focus.
@@ -24,7 +27,7 @@ export function ProtectedRoute({ children, requireAdmin = false }: ProtectedRout
   }
 
   // For admin routes, deny access if profile is missing or not admin
-  if (requireAdmin) {
+  if (enforcedRoles) {
     if (!profile && isLoading) {
       return (
         <div className="flex items-center justify-center min-h-screen px-4">
@@ -35,7 +38,7 @@ export function ProtectedRoute({ children, requireAdmin = false }: ProtectedRout
       );
     }
 
-    if (!profile || !isAdmin) {
+    if (!profile || !enforcedRoles.includes(role as 'admin' | 'support' | 'visa_officer')) {
       return <Navigate to="/dashboard" replace />;
     }
   }

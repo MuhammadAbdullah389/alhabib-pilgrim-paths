@@ -24,14 +24,16 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 
-const adminItems = [
-  { title: "Overview", url: "/admin", icon: LayoutDashboard },
-  { title: "Packages", url: "/admin/packages", icon: Package },
-  { title: "Hotels", url: "/admin/hotels", icon: Hotel },
-  { title: "Bookings", url: "/admin/bookings", icon: ClipboardList },
-  { title: "Testimonials", url: "/admin/testimonials", icon: MessageSquare },
-  { title: "Documents", url: "/admin/documents", icon: FileText },
-  { title: "Chat", url: "/admin/chat", icon: MessageCircle },
+type StaffRole = 'admin' | 'support' | 'visa_officer';
+
+const adminItems: Array<{ title: string; url: string; icon: any; roles?: StaffRole[] }> = [
+  { title: "Overview", url: "/admin", icon: LayoutDashboard, roles: ["admin", "support", "visa_officer"] },
+  { title: "Packages", url: "/admin/packages", icon: Package, roles: ["admin"] },
+  { title: "Hotels", url: "/admin/hotels", icon: Hotel, roles: ["admin"] },
+  { title: "Bookings", url: "/admin/bookings", icon: ClipboardList, roles: ["admin", "support"] },
+  { title: "Testimonials", url: "/admin/testimonials", icon: MessageSquare, roles: ["admin", "support"] },
+  { title: "Documents", url: "/admin/documents", icon: FileText, roles: ["admin", "visa_officer"] },
+  { title: "Chat", url: "/admin/chat", icon: MessageCircle, roles: ["admin", "support"] },
 ];
 
 export function AdminSidebar() {
@@ -39,7 +41,9 @@ export function AdminSidebar() {
   const collapsed = state === "collapsed";
   const location = useLocation();
   const navigate = useNavigate();
-  const { signOut } = useAuth();
+  const { signOut, profile } = useAuth();
+  const role = (profile?.role || 'user') as StaffRole | 'user';
+  const visibleItems = adminItems.filter((item) => !item.roles || item.roles.includes(role as StaffRole));
 
   const isActive = (path: string) =>
     path === "/admin"
@@ -64,7 +68,7 @@ export function AdminSidebar() {
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {adminItems.map((item) => (
+              {visibleItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
                     <NavLink

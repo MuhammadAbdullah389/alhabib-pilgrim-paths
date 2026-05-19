@@ -136,7 +136,7 @@ const App = () => {
           <Route
             path="/admin"
             element={
-              <ProtectedRoute requireAdmin>
+              <ProtectedRoute allowedRoles={["admin", "support", "visa_officer"]}>
                 <AdminOverview />
               </ProtectedRoute>
             }
@@ -144,7 +144,7 @@ const App = () => {
           <Route
             path="/admin/packages"
             element={
-              <ProtectedRoute requireAdmin>
+              <ProtectedRoute allowedRoles={["admin"]}>
                 <AdminPackages />
               </ProtectedRoute>
             }
@@ -152,7 +152,7 @@ const App = () => {
           <Route
             path="/admin/hotels"
             element={
-              <ProtectedRoute requireAdmin>
+              <ProtectedRoute allowedRoles={["admin"]}>
                 <AdminHotels />
               </ProtectedRoute>
             }
@@ -160,7 +160,7 @@ const App = () => {
           <Route
             path="/admin/bookings"
             element={
-              <ProtectedRoute requireAdmin>
+              <ProtectedRoute allowedRoles={["admin", "support"]}>
                 <AdminBookings />
               </ProtectedRoute>
             }
@@ -168,7 +168,7 @@ const App = () => {
           <Route
             path="/admin/testimonials"
             element={
-              <ProtectedRoute requireAdmin>
+              <ProtectedRoute allowedRoles={["admin", "support"]}>
                 <AdminTestimonials />
               </ProtectedRoute>
             }
@@ -176,7 +176,7 @@ const App = () => {
           <Route
             path="/admin/documents"
             element={
-              <ProtectedRoute requireAdmin>
+              <ProtectedRoute allowedRoles={["admin", "visa_officer"]}>
                 <AdminDocumentReview />
               </ProtectedRoute>
             }
@@ -184,7 +184,7 @@ const App = () => {
           <Route
             path="/admin/chat"
             element={
-              <ProtectedRoute requireAdmin>
+              <ProtectedRoute allowedRoles={["admin", "support"]}>
                 <AdminChat />
               </ProtectedRoute>
             }

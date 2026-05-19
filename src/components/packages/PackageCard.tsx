@@ -1,5 +1,6 @@
 import { PackageType, formatPrice } from "@/data/packages";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Clock, Star, ArrowRight, Plane } from "lucide-react";
 import { motion } from "framer-motion";
 import heroKaaba from "@/assets/hero-kaaba.jpg";
@@ -8,9 +9,12 @@ import masjidNabawi from "@/assets/masjid-nabawi.jpg";
 interface PackageCardProps {
   pkg: PackageType;
   onViewDetails: (pkg: PackageType) => void;
+  compareMode?: boolean;
+  compareSelected?: boolean;
+  onToggleCompare?: (pkg: PackageType) => void;
 }
 
-const PackageCard = ({ pkg, onViewDetails }: PackageCardProps) => {
+const PackageCard = ({ pkg, onViewDetails, compareMode = false, compareSelected = false, onToggleCompare }: PackageCardProps) => {
   const image = pkg.type === 'hajj' ? heroKaaba : masjidNabawi;
   const priceEntries = Object.entries(pkg.prices).filter(([, v]) => v !== undefined);
   const lowestPrice = Math.min(...priceEntries.map(([, v]) => v!));
@@ -22,6 +26,23 @@ const PackageCard = ({ pkg, onViewDetails }: PackageCardProps) => {
       className="group glass-card rounded-2xl overflow-hidden shimmer-hover hover:shadow-gold transition-all duration-500 flex flex-col border border-accent/25 shadow-[0_10px_30px_rgba(0,0,0,0.08)]"
     >
       <div className="relative h-52 overflow-hidden">
+        {compareMode && (
+          <button
+            type="button"
+            onClick={(event) => {
+              event.preventDefault();
+              event.stopPropagation();
+              onToggleCompare?.(pkg);
+            }}
+            className="absolute top-3 left-3 z-10 flex items-center gap-2 rounded-full bg-background/90 px-3 py-1 text-xs font-medium text-foreground shadow-md"
+          >
+            <Checkbox
+              checked={compareSelected}
+              className="h-4 w-4 pointer-events-none"
+            />
+            Compare
+          </button>
+        )}
         <img src={image} alt={pkg.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" loading="lazy" decoding="async" />
         {pkg.featured && (
           <div className="absolute top-4 right-4 gradient-gold px-3 py-1.5 rounded-full flex items-center gap-1.5 text-xs font-semibold text-primary-foreground shadow-gold">

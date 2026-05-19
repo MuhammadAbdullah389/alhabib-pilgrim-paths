@@ -6,7 +6,7 @@ interface Profile {
   id: string;
   full_name: string | null;
   phone: string | null;
-  role: 'user' | 'admin';
+  role: 'user' | 'admin' | 'support' | 'visa_officer';
   location: string | null;
   avatar_url: string | null;
 }
@@ -15,7 +15,9 @@ interface AuthContextType {
   session: Session | null;
   user: User | null;
   profile: Profile | null;
+  role: Profile['role'];
   isAdmin: boolean;
+  isStaff: boolean;
   isLoading: boolean;
   refreshProfile: () => Promise<void>;
   signUp: (email: string, password: string, fullName: string) => Promise<void>;
@@ -169,7 +171,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (error) throw error;
   };
 
-  const isAdmin = profile?.role === 'admin';
+  const role = profile?.role ?? 'user';
+  const isAdmin = role === 'admin';
+  const isStaff = role !== 'user';
 
   const refreshProfile = async () => {
     if (!user?.id) return;
@@ -180,7 +184,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     session,
     user,
     profile,
+    role,
     isAdmin,
+    isStaff,
     isLoading,
     refreshProfile,
     signUp,

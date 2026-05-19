@@ -48,6 +48,42 @@ const statusNext: Record<Booking['status'], Booking['status'] | null> = {
   cancelled: null,
 };
 
+const SLA_HOURS: Partial<Record<Booking['status'], number>> = {
+  pending: 24,
+  documents: 48,
+  visa: 168,
+};
+
+const getSlaMeta = (booking: Booking) => {
+  const threshold = SLA_HOURS[booking.status];
+  if (!threshold) {
+    return { label: '—', className: 'bg-muted text-muted-foreground border-border' };
+  }
+
+  const baseTime = booking.updated_at || booking.created_at;
+  const ageHours = Math.max(0, (Date.now() - new Date(baseTime).getTime()) / 36e5);
+  const hoursLeft = threshold - ageHours;
+
+  if (hoursLeft <= 0) {
+    return {
+      label: `Overdue ${Math.abs(Math.ceil(hoursLeft))}h`,
+      className: 'bg-red-50 text-red-700 border-red-200',
+    };
+  }
+
+  if (hoursLeft <= threshold * 0.25) {
+    return {
+      label: `Due in ${Math.ceil(hoursLeft)}h`,
+      className: 'bg-amber-50 text-amber-700 border-amber-200',
+    };
+  }
+
+  return {
+    label: `Due in ${Math.ceil(hoursLeft)}h`,
+    className: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+  };
+};
+
 const formatPrice = (amount: number | null) => {
   if (!amount) return "N/A";
   return new Intl.NumberFormat("en-PK", { style: "currency", currency: "PKR", maximumFractionDigits: 0 }).format(amount);
@@ -136,6 +172,83 @@ const AdminBookings = () => {
     }
 
     return digits;
+  };
+
+  const getApplicantEmail = (booking: Booking) =>
+    booking.applicant_email || String((booking.form_data as any)?.email || "");
+
+  const getApplicantPhone = (booking: Booking) =>
+    (booking.form_data as any)?.phone || booking.applicant_phone || "";
+
+  const buildPortalLink = (booking: Booking) =>
+    `${window.location.origin}/portal/upload-documents?booking_id=${booking.id}`;
+
+  const buildSignInLink = (booking: Booking) => {
+    const email = getApplicantEmail(booking);
+    const redirect = `/portal/upload-documents?booking_id=${booking.id}`;
+    return `${window.location.origin}/auth/sign-in?email=${encodeURIComponent(email)}&redirect=${encodeURIComponent(redirect)}`;
+  };
+
+  const whatsappTemplates = [
+    {
+      id: "payment",
+      label: "Payment Reminder",
+      build: (booking: Booking) => [
+        "Assalam o Alaikum!",
+        "",
+        `This is a reminder about payment for application ${booking.booking_code} (${booking.package_name_snapshot}).`,
+        `Amount: PKR ${booking.amount_pkr?.toLocaleString() || "0"}`,
+        "",
+        "Please confirm your payment or contact us for assistance.",
+        "JazakAllah Khair.",
+      ].join("\n"),
+    },
+    {
+      id: "documents",
+      label: "Document Reminder",
+      build: (booking: Booking) => {
+        const link = booking.user_id ? buildSignInLink(booking) : buildPortalLink(booking);
+        return [
+          "Assalam o Alaikum!",
+          "",
+          `Your application ${booking.booking_code} (${booking.package_name_snapshot}) is waiting for documents.`,
+          "Please upload your documents using the link below:",
+          link,
+          "",
+          "JazakAllah Khair.",
+        ].join("\n");
+      },
+    },
+    {
+      id: "status",
+      label: "Status Update",
+      build: (booking: Booking) => [
+        "Assalam o Alaikum!",
+        "",
+        `Your application ${booking.booking_code} is currently in the ${booking.status} stage.`,
+        "We will update you with the next step soon.",
+        "",
+        "JazakAllah Khair.",
+      ].join("\n"),
+    },
+  ];
+
+  const openWhatsAppTemplate = (booking: Booking, templateId: string) => {
+    const phoneRaw = getApplicantPhone(booking);
+    const phone = normalizePhone(phoneRaw);
+    if (!phone) {
+      toast.error("Applicant phone is missing");
+      return;
+    }
+
+    const template = whatsappTemplates.find((item) => item.id === templateId);
+    if (!template) return;
+
+    const waUrl = `https://wa.me/${phone}?text=${encodeURIComponent(template.build(booking))}`;
+    const opened = window.open(waUrl, "_blank");
+    if (!opened) {
+      toast.error("Popup blocked. Please allow popups and try again.");
+    }
   };
 
   const openWhatsAppForDocRequest = (
@@ -813,6 +926,7 @@ const AdminBookings = () => {
                     <TableHead>Customer</TableHead>
                     <TableHead className="hidden md:table-cell">Package</TableHead>
                     <TableHead>Status</TableHead>
+                    <TableHead className="hidden lg:table-cell">SLA</TableHead>
                     <TableHead className="hidden md:table-cell">Amount</TableHead>
                     <TableHead>Action</TableHead>
                   </TableRow>
@@ -821,7 +935,7 @@ const AdminBookings = () => {
                   {isLoading ? (
                     Array.from({ length: 6 }).map((_, i) => (
                       <TableRow key={i}>
-                        <TableCell colSpan={7}><Skeleton className="h-8 w-full" /></TableCell>
+                        <TableCell colSpan={8}><Skeleton className="h-8 w-full" /></TableCell>
                       </TableRow>
                     ))
                   ) : activeBookings.map((b) => (
@@ -851,6 +965,9 @@ const AdminBookings = () => {
                       </TableCell>
                       <TableCell>
                         <Badge className={`${statusColors[b.status]} border capitalize`}>{b.status}</Badge>
+                      </TableCell>
+                      <TableCell className="hidden lg:table-cell">
+                        <Badge className={`${getSlaMeta(b).className} border`}>{getSlaMeta(b).label}</Badge>
                       </TableCell>
                       <TableCell className="hidden md:table-cell">{formatPrice(b.amount_pkr)}</TableCell>
                       <TableCell>
@@ -914,6 +1031,10 @@ const AdminBookings = () => {
                           <p className="text-xs text-muted-foreground">Visa Type: {formatVisaType((b.form_data as any)?.visaType)}</p>
                         )}
                         <p className="text-xs text-muted-foreground mt-1">Amount: {formatPrice(b.amount_pkr)}</p>
+                        <div className="mt-2 flex items-center gap-2">
+                          <span className="text-xs text-muted-foreground">SLA:</span>
+                          <Badge className={`${getSlaMeta(b).className} border text-xs`}>{getSlaMeta(b).label}</Badge>
+                        </div>
                       </div>
 
                       <div className="grid grid-cols-1 gap-2">
@@ -1348,6 +1469,22 @@ const AdminBookings = () => {
                   <p className="text-muted-foreground mb-1">Admin Notes</p>
                   <div className="rounded-md border p-3 bg-muted/30">
                     {detailsBooking.admin_notes || '—'}
+                  </div>
+                </div>
+
+                <div>
+                  <p className="text-muted-foreground mb-2">WhatsApp Templates</p>
+                  <div className="flex flex-wrap gap-2">
+                    {whatsappTemplates.map((template) => (
+                      <Button
+                        key={template.id}
+                        size="sm"
+                        variant="outline"
+                        onClick={() => openWhatsAppTemplate(detailsBooking, template.id)}
+                      >
+                        {template.label}
+                      </Button>
+                    ))}
                   </div>
                 </div>
 

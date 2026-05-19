@@ -5,9 +5,10 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
-import { FolderOpen } from "lucide-react";
+import { FileText, FolderOpen } from "lucide-react";
 import { useAuth } from "@/lib/authContext";
-import { useUserBookings } from "@/hooks/useSupabase";
+import { useUserBookings, type Booking } from "@/hooks/useSupabase";
+import { toast } from "sonner";
 
 const statusSteps = ['pending', 'documents', 'visa', 'confirmed'] as const;
 const stepLabels = { pending: 'Applied', documents: 'Documents', visa: 'Visa Processing', confirmed: 'Confirmed' };
@@ -29,6 +30,87 @@ const UserBookings = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { data: bookings, isLoading } = useUserBookings(user?.id || '');
+
+  const getPaymentStatus = (booking: Booking) => (booking.status === "confirmed" ? "paid" : "pending");
+
+  const openInvoice = (booking: Booking) => {
+    const applicantName =
+      (booking.form_data as any)?.fullName ||
+      (booking.form_data as any)?.name ||
+      booking.applicant_email ||
+      "Applicant";
+
+    const html = `<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Invoice ${booking.booking_code}</title>
+    <style>
+      body { font-family: Arial, sans-serif; color: #111; padding: 24px; }
+      h1 { margin: 0 0 6px; font-size: 22px; }
+      h2 { margin: 20px 0 8px; font-size: 16px; }
+      p { margin: 4px 0; color: #444; }
+      table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+      th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+      th { background: #f5f5f5; }
+      .muted { color: #666; font-size: 12px; }
+    </style>
+  </head>
+  <body>
+    <h1>Invoice</h1>
+    <p class="muted">Booking Code: ${booking.booking_code}</p>
+    <p class="muted">Issued: ${new Date().toLocaleDateString()}</p>
+
+    <h2>Applicant</h2>
+    <p>${applicantName}</p>
+    <p>${booking.applicant_email || (booking.form_data as any)?.email || ""}</p>
+
+    <h2>Booking Details</h2>
+    <table>
+      <thead>
+        <tr><th>Package</th><th>Type</th><th>Sharing</th><th>Status</th><th>Amount</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>${booking.package_name_snapshot}</td>
+          <td>${booking.package_type}</td>
+          <td>${booking.sharing_type || "N/A"}</td>
+          <td>${booking.status}</td>
+          <td>PKR ${booking.amount_pkr?.toLocaleString() || "0"}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p class="muted">Thank you for choosing our services.</p>
+  </body>
+</html>`;
+
+    const blob = new Blob([html], { type: "text/html" });
+    const blobUrl = URL.createObjectURL(blob);
+    const win = window.open(blobUrl, "_blank", "noopener,noreferrer");
+
+    if (!win) {
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.download = `invoice-${booking.booking_code}.html`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      toast.error("Popup blocked. Downloading the invoice instead.");
+      setTimeout(() => URL.revokeObjectURL(blobUrl), 10000);
+      return;
+    }
+
+    win.focus();
+    setTimeout(() => {
+      try {
+        win.print();
+      } catch {
+      }
+    }, 400);
+
+    setTimeout(() => URL.revokeObjectURL(blobUrl), 15000);
+  };
 
   if (!user) {
     return (
@@ -65,11 +147,17 @@ const UserBookings = () => {
                 </div>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3 text-sm">
                   <div><span className="text-muted-foreground">ID:</span> <span className="font-mono">{b.booking_code}</span></div>
                   <div><span className="text-muted-foreground">Type:</span> <span className="capitalize">{b.package_type}</span></div>
                   <div><span className="text-muted-foreground">Sharing:</span> {b.sharing_type}</div>
                   <div><span className="text-muted-foreground">Amount:</span> Rs. {b.amount_pkr?.toLocaleString()}</div>
+                  <div>
+                    <span className="text-muted-foreground">Payment:</span>{" "}
+                    <Badge className={getPaymentStatus(b) === "paid" ? "bg-green-100 text-green-800" : "bg-yellow-100 text-yellow-800"}>
+                      {getPaymentStatus(b)}
+                    </Badge>
+                  </div>
                 </div>
 
                 {/* Progress Tracker */}
@@ -93,6 +181,15 @@ const UserBookings = () => {
                   >
                     <FolderOpen className="h-4 w-4" />
                     Open Document Portal
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="gap-2 w-full sm:w-auto"
+                    onClick={() => openInvoice(b)}
+                  >
+                    <FileText className="h-4 w-4" />
+                    Download Invoice
                   </Button>
                 </div>
               </CardContent>

@@ -31,6 +31,80 @@ const PackageModal = ({ pkg, open, onClose, portalMode = false }: PackageModalPr
   const navigate = useNavigate();
   const { user } = useAuth();
 
+  const escapeHtml = (value: string) =>
+    value
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/\"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+
+  const openBrochure = () => {
+    if (!pkg) return;
+    const win = window.open("", "_blank", "noopener,noreferrer");
+    if (!win) return;
+
+    const prices = Object.entries(pkg.prices)
+      .filter(([, value]) => typeof value === "number")
+      .map(([label, value]) => `<tr><td>${escapeHtml(label)}</td><td>${escapeHtml(formatPrice(value as number))}</td></tr>`)
+      .join("");
+
+    const hotels = pkg.hotels
+      .map((h) => `<li>${escapeHtml(h.name)} - ${escapeHtml(h.city)} (${escapeHtml(h.distance)})</li>`)
+      .join("");
+
+    const services = pkg.services.map((s) => `<li>${escapeHtml(s)}</li>`).join("");
+    const requirements = (pkg.requirements || []).map((r) => `<li>${escapeHtml(r)}</li>`).join("");
+    const details = (pkg.packageDetails || []).map((d) => `<li>${escapeHtml(d)}</li>`).join("");
+
+    const html = `<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>${escapeHtml(pkg.name)} - Brochure</title>
+    <style>
+      body { font-family: Arial, sans-serif; color: #111; padding: 24px; }
+      h1 { margin: 0 0 8px; font-size: 24px; }
+      h2 { margin: 20px 0 8px; font-size: 16px; }
+      p { margin: 4px 0; color: #444; }
+      table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+      th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+      th { background: #f5f5f5; }
+      ul { margin: 6px 0 0; padding-left: 18px; }
+      .muted { color: #666; font-size: 12px; }
+    </style>
+  </head>
+  <body>
+    <h1>${escapeHtml(pkg.name)}</h1>
+    <p class="muted">${escapeHtml(pkg.duration)}</p>
+    ${pkg.flightInfo ? `<p class="muted">Flight: ${escapeHtml(pkg.flightInfo.route || "")} ${escapeHtml(pkg.flightInfo.date || "")}</p>` : ""}
+
+    <h2>Pricing</h2>
+    <table>
+      <thead><tr><th>Sharing</th><th>Price</th></tr></thead>
+      <tbody>${prices || "<tr><td colspan=\"2\">No pricing available</td></tr>"}</tbody>
+    </table>
+
+    <h2>Hotels</h2>
+    <ul>${hotels || "<li>No hotel data available</li>"}</ul>
+
+    <h2>Services Included</h2>
+    <ul>${services || "<li>No services listed</li>"}</ul>
+
+    ${details ? `<h2>Package Details</h2><ul>${details}</ul>` : ""}
+    ${requirements ? `<h2>Requirements</h2><ul>${requirements}</ul>` : ""}
+    ${pkg.overseasDiscount ? `<h2>Overseas Discount</h2><p>${escapeHtml(pkg.overseasDiscount)}</p>` : ""}
+
+    <p class="muted">Generated on ${new Date().toLocaleDateString()}</p>
+  </body>
+</html>`;
+
+    win.document.write(html);
+    win.document.close();
+    win.focus();
+    win.print();
+  };
+
   const buildWhatsAppUrl = (priceText: string, hotelText: string) => {
     const message = `Assalam o Alaikum,\n\nI am interested in the following package:\n\nPackage Name: ${pkg?.name || ''}\nPrice: ${priceText}\nDuration: ${pkg?.duration || ''}\nHotel: ${hotelText}\n\nPlease share more details.`;
     return `https://wa.me/${SITE_CONTACT.whatsappNumber}?text=${encodeURIComponent(message)}`;
@@ -368,6 +442,9 @@ const PackageModal = ({ pkg, open, onClose, portalMode = false }: PackageModalPr
             </Button>
             <Button variant="whatsapp" className="flex-1 gap-2" onClick={() => setStep('sharing')}>
               <Phone className="w-4 h-4" /> Book via WhatsApp
+            </Button>
+            <Button variant="outline" className="flex-1 gap-2" onClick={openBrochure}>
+              <FileText className="w-4 h-4" /> Download Brochure
             </Button>
             <a href={`tel:${SITE_CONTACT.primaryPhoneDial}`} className="flex-1">
               <Button variant="outline" className="w-full gap-2">
