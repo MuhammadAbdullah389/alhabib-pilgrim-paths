@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -19,6 +19,7 @@ import {
   useUpdateRitualGuidanceSection,
   type RitualGuidanceSection,
 } from "@/hooks/useSupabase";
+import { fallbackRitualGuidance } from "@/data/ritualGuidance";
 
 const GROUPS = [
   { value: "general", label: "Getting Started" },
@@ -54,6 +55,13 @@ const AdminRitualGuidance = () => {
   const { mutateAsync: updateSection, isPending: isUpdating } = useUpdateRitualGuidanceSection();
   const { mutate: deleteSection, isPending: isDeleting } = useDeleteRitualGuidanceSection();
 
+  const [showDefaultsAlert, setShowDefaultsAlert] = useState(false);
+
+  // Show alert if no sections exist (fallback guidelines are being used)
+  useEffect(() => {
+    setShowDefaultsAlert(!isLoading && sections.length === 0);
+  }, [isLoading, sections.length]);
+
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState({
@@ -74,6 +82,26 @@ const AdminRitualGuidance = () => {
       }),
     [sections],
   );
+
+  const handleLoadDefaults = async () => {
+    try {
+      // Create all default sections
+      for (const defaultSection of fallbackRitualGuidance) {
+        await createSection({
+          slug: defaultSection.slug,
+          title: defaultSection.title,
+          section_group: defaultSection.section_group,
+          body: defaultSection.body,
+          sort_order: defaultSection.sort_order,
+          is_published: defaultSection.is_published,
+        });
+      }
+      setShowDefaultsAlert(false);
+      toast.success("Default guidance sections loaded!");
+    } catch (error: any) {
+      toast.error(error?.message || "Failed to load defaults");
+    }
+  };
 
   const resetForm = () => {
     setForm({
@@ -245,6 +273,22 @@ const AdminRitualGuidance = () => {
             </DialogContent>
           </Dialog>
         </div>
+
+        {showDefaultsAlert && (
+          <Card className="border-accent/30 bg-accent/5">
+            <CardContent className="p-4 space-y-3">
+              <div>
+                <p className="text-sm font-medium text-foreground">No custom sections yet</p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  The public site currently shows default guidelines. Load them here to start customizing.
+                </p>
+              </div>
+              <Button variant="gold" size="sm" onClick={handleLoadDefaults} disabled={isCreating}>
+                {isCreating ? "Loading..." : "Load Default Guidelines"}
+              </Button>
+            </CardContent>
+          </Card>
+        )}
 
         <Card>
           <CardContent className="p-0">
