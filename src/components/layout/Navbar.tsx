@@ -15,6 +15,7 @@ const navLinks = [
   { label: "Umrah Packages", path: "/umrah-packages" },
   { label: "Visa Assistance", path: "/visa-assistance" },
   { label: "Hajj Training", path: "/hajj-training" },
+  { label: "Ritual Guidance", path: "/ritual-guidance" },
   { label: "About Us", path: "/about-us" },
   { label: "FAQs", path: "/faqs" },
 ];

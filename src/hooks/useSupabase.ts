@@ -115,6 +115,29 @@ export interface TrainingSession {
   updated_at: string;
 }
 
+export interface RitualGuidanceSection {
+  id: string;
+  slug: string;
+  title: string;
+  section_group:
+    | 'general'
+    | 'before_departure'
+    | 'madinah'
+    | 'makkah'
+    | 'umrah'
+    | 'hajj'
+    | 'hajj_days'
+    | 'ihram'
+    | 'duas'
+    | 'videos'
+    | 'maps';
+  body: string;
+  sort_order: number;
+  is_published: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface BookingDocument {
   id: string;
   booking_id: string;
@@ -924,6 +947,92 @@ export function useDeleteTrainingSession() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['training-sessions-public'] });
       queryClient.invalidateQueries({ queryKey: ['training-sessions-admin'] });
+    },
+  });
+}
+
+// ========== RITUAL GUIDANCE ==========
+
+export function useRitualGuidancePublic() {
+  return useQuery({
+    queryKey: ['ritual-guidance-public'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('ritual_guidance_sections')
+        .select('*')
+        .eq('is_published', true)
+        .order('sort_order', { ascending: true });
+      if (error) throw error;
+      return (data || []) as RitualGuidanceSection[];
+    },
+  });
+}
+
+export function useAdminRitualGuidanceSections() {
+  return useQuery({
+    queryKey: ['ritual-guidance-admin'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('ritual_guidance_sections')
+        .select('*')
+        .order('section_group', { ascending: true })
+        .order('sort_order', { ascending: true });
+      if (error) throw error;
+      return (data || []) as RitualGuidanceSection[];
+    },
+  });
+}
+
+export function useCreateRitualGuidanceSection() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (payload: Omit<RitualGuidanceSection, 'id' | 'created_at' | 'updated_at'> & { updated_at?: string }) => {
+      const { data, error } = await supabase
+        .from('ritual_guidance_sections')
+        .insert([payload])
+        .select()
+        .single();
+      if (error) throw error;
+      return data as RitualGuidanceSection;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['ritual-guidance-public'] });
+      queryClient.invalidateQueries({ queryKey: ['ritual-guidance-admin'] });
+    },
+  });
+}
+
+export function useUpdateRitualGuidanceSection() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, ...updates }: Partial<RitualGuidanceSection> & { id: string }) => {
+      const { data, error } = await supabase
+        .from('ritual_guidance_sections')
+        .update(updates)
+        .eq('id', id)
+        .select()
+        .single();
+      if (error) throw error;
+      return data as RitualGuidanceSection;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['ritual-guidance-public'] });
+      queryClient.invalidateQueries({ queryKey: ['ritual-guidance-admin'] });
+    },
+  });
+}
+
+export function useDeleteRitualGuidanceSection() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from('ritual_guidance_sections').delete().eq('id', id);
+      if (error) throw error;
+      return id;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['ritual-guidance-public'] });
+      queryClient.invalidateQueries({ queryKey: ['ritual-guidance-admin'] });
     },
   });
 }

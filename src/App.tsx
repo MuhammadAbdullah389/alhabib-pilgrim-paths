@@ -25,6 +25,8 @@ const AdminBookings = lazy(() => import("./pages/admin/AdminBookings"));
 const AdminTestimonials = lazy(() => import("./pages/admin/AdminTestimonials"));
 const AdminDocumentReview = lazy(() => import("./pages/admin/AdminDocumentReview"));
 const AdminTraining = lazy(() => import("./pages/admin/AdminTraining"));
+const RitualGuidance = lazy(() => import("./pages/RitualGuidance"));
+const AdminRitualGuidance = lazy(() => import("./pages/admin/AdminRitualGuidance"));
 const UserOverview = lazy(() => import("./pages/user/UserOverview"));
 const UserBookings = lazy(() => import("./pages/user/UserBookings"));
 const UserTestimonials = lazy(() => import("./pages/user/UserTestimonials"));
@@ -64,6 +66,7 @@ const App = () => {
           <Route path="/umrah-packages" element={<UmrahPackages />} />
           <Route path="/visa-assistance" element={<VisaAssistance />} />
           <Route path="/hajj-training" element={<HajjTraining />} />
+          <Route path="/ritual-guidance" element={<RitualGuidance />} />
           <Route path="/faqs" element={<FAQs />} />
           <Route path="/about-us" element={<AboutUs />} />
           <Route path="/contact-us" element={<ContactUs />} />
@@ -189,6 +192,14 @@ const App = () => {
             element={
               <ProtectedRoute allowedRoles={["admin"]}>
                 <AdminTraining />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/ritual-guidance"
+            element={
+              <ProtectedRoute allowedRoles={["admin"]}>
+                <AdminRitualGuidance />
               </ProtectedRoute>
             }
           />
