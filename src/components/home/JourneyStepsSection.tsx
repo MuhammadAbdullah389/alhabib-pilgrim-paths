@@ -163,8 +163,8 @@ const JourneyStepsSection = () => {
               </div>
             </DialogContent>
           </Dialog>
-          <Link to="/auth/sign-in">
-            <Button variant="outline" size="lg">Track From Dashboard</Button>
+          <Link to="/track-application">
+            <Button variant="outline" size="lg">Track Application</Button>
           </Link>
         </motion.div>
       </div>

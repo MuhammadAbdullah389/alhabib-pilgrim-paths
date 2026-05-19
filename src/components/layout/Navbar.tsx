@@ -14,10 +14,9 @@ const navLinks = [
   { label: "Hajj Packages", path: "/hajj-packages" },
   { label: "Umrah Packages", path: "/umrah-packages" },
   { label: "Visa Assistance", path: "/visa-assistance" },
+  { label: "Hajj Training", path: "/hajj-training" },
   { label: "About Us", path: "/about-us" },
-  { label: "Contact", path: "/contact-us" },
   { label: "FAQs", path: "/faqs" },
-  { label: "Track Application", path: "/track-application" },
 ];
 
 const Navbar = () => {

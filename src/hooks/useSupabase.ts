@@ -98,6 +98,23 @@ export interface ContactMessage {
   created_at: string;
 }
 
+export interface TrainingSession {
+  id: string;
+  title: string;
+  description: string | null;
+  event_date: string | null;
+  start_time: string | null;
+  end_time: string | null;
+  location: string | null;
+  session_type: 'upcoming' | 'completed';
+  status: 'draft' | 'published';
+  cover_image_url: string | null;
+  photo_urls: string[] | null;
+  download_url: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface BookingDocument {
   id: string;
   booking_id: string;
@@ -822,6 +839,91 @@ export function useAllContactMessages() {
         .order('created_at', { ascending: false });
       if (error) throw error;
       return data as ContactMessage[];
+    },
+  });
+}
+
+// ========== TRAINING SESSIONS ==========
+
+export function useTrainingSessionsPublic() {
+  return useQuery({
+    queryKey: ['training-sessions-public'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('training_sessions')
+        .select('*')
+        .eq('status', 'published')
+        .order('event_date', { ascending: true });
+      if (error) throw error;
+      return (data || []) as TrainingSession[];
+    },
+  });
+}
+
+export function useAdminTrainingSessions() {
+  return useQuery({
+    queryKey: ['training-sessions-admin'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('training_sessions')
+        .select('*')
+        .order('event_date', { ascending: false });
+      if (error) throw error;
+      return (data || []) as TrainingSession[];
+    },
+  });
+}
+
+export function useCreateTrainingSession() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (payload: Omit<TrainingSession, 'id' | 'created_at' | 'updated_at'> & { updated_at?: string }) => {
+      const { data, error } = await supabase
+        .from('training_sessions')
+        .insert([payload])
+        .select()
+        .single();
+      if (error) throw error;
+      return data as TrainingSession;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['training-sessions-public'] });
+      queryClient.invalidateQueries({ queryKey: ['training-sessions-admin'] });
+    },
+  });
+}
+
+export function useUpdateTrainingSession() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, ...updates }: Partial<TrainingSession> & { id: string }) => {
+      const { data, error } = await supabase
+        .from('training_sessions')
+        .update(updates)
+        .eq('id', id)
+        .select()
+        .single();
+      if (error) throw error;
+      return data as TrainingSession;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['training-sessions-public'] });
+      queryClient.invalidateQueries({ queryKey: ['training-sessions-admin'] });
+    },
+  });
+}
+
+export function useDeleteTrainingSession() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from('training_sessions').delete().eq('id', id);
+      if (error) throw error;
+      return id;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['training-sessions-public'] });
+      queryClient.invalidateQueries({ queryKey: ['training-sessions-admin'] });
     },
   });
 }

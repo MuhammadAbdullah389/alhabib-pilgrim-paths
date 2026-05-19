@@ -36,9 +36,11 @@ const Footer = () => {
                 { label: "Hajj Packages", path: "/hajj-packages" },
                 { label: "Umrah Packages", path: "/umrah-packages" },
                 { label: "Visa Assistance", path: "/visa-assistance" },
+                { label: "Hajj Training", path: "/hajj-training" },
                 { label: "About Us", path: "/about-us" },
                 { label: "Contact Us", path: "/contact-us" },
                 { label: "FAQs", path: "/faqs" },
+                { label: "Track Application", path: "/track-application" },
               ].map((link) => (
                 <Link key={link.path} to={link.path} className="text-primary-foreground/60 hover:text-accent text-sm transition-colors hover:translate-x-1 transform duration-200 inline-flex items-center gap-1">
                   <span className="text-accent/50">›</span> {link.label}

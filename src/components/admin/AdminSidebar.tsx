@@ -7,6 +7,7 @@ import {
   MessageSquare,
   MessageCircle,
   ArrowLeft,
+  CalendarDays,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -34,6 +35,7 @@ const adminItems: Array<{ title: string; url: string; icon: any; roles?: StaffRo
   { title: "Testimonials", url: "/admin/testimonials", icon: MessageSquare, roles: ["admin", "support"] },
   { title: "Documents", url: "/admin/documents", icon: FileText, roles: ["admin", "visa_officer"] },
   { title: "Chat", url: "/admin/chat", icon: MessageCircle, roles: ["admin", "support"] },
+  { title: "Training Sessions", url: "/admin/training", icon: CalendarDays, roles: ["admin"] },
 ];
 
 export function AdminSidebar() {
