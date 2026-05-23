@@ -65,7 +65,7 @@ const AdminOverview = () => {
 
   return (
     <AdminLayout>
-      <div className="space-y-6">
+      <div className="space-y-6 w-full max-w-full overflow-hidden">
         <h1 className="font-display text-2xl font-bold text-foreground">Dashboard Overview</h1>
 
         {/* Stat Cards */}
@@ -90,13 +90,13 @@ const AdminOverview = () => {
         </div>
 
         {/* Charts */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <Card>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full">
+          <Card className="w-full">
             <CardHeader>
               <CardTitle className="text-lg">Monthly Bookings</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="h-72">
+              <div className="h-72 w-full overflow-hidden">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={monthlyBookingsData}>
                     <CartesianGrid strokeDasharray="3 3" stroke="hsl(40 20% 88%)" />
@@ -110,12 +110,12 @@ const AdminOverview = () => {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="w-full">
             <CardHeader>
               <CardTitle className="text-lg">Bookings by Type</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="h-72">
+              <div className="h-72 w-full overflow-hidden">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie data={packageTypeData} cx="50%" cy="50%" innerRadius={60} outerRadius={100} dataKey="value" label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}>

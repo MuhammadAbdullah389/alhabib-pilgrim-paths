@@ -9,10 +9,10 @@ interface AdminLayoutProps {
 const AdminLayout = ({ children }: AdminLayoutProps) => {
   return (
     <SidebarProvider>
-      <div className="min-h-screen flex w-full">
+      <div className="min-h-screen flex w-full overflow-hidden">
         <AdminSidebar />
-        <div className="flex-1 flex flex-col">
-          <header className="h-16 flex items-center justify-between border-b border-border px-6 bg-card/80 backdrop-blur-md sticky top-0 z-10">
+        <div className="flex-1 flex flex-col min-w-0">
+          <header className="h-16 flex items-center justify-between border-b border-border px-6 bg-card/80 backdrop-blur-md sticky top-0 z-10 flex-shrink-0">
             <div className="flex items-center gap-4">
               <SidebarTrigger className="mr-2" />
               <div className="hidden sm:flex items-center h-9 px-3 rounded-md bg-muted/40 border border-border/50">
@@ -37,8 +37,10 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
               </div>
             </div>
           </header>
-          <main className="flex-1 p-6 bg-background overflow-auto">
-            {children}
+          <main className="flex-1 p-6 bg-background overflow-hidden w-full min-w-0 no-scrollbar">
+            <div className="h-full overflow-y-auto w-full no-scrollbar">
+              {children}
+            </div>
           </main>
         </div>
       </div>
